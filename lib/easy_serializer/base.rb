@@ -51,7 +51,7 @@ module EasySerializer
     end
 
     def serialized_from_cache
-      return false unless ActiveSerializer.perform_caching
+      return false unless EasySerializer.perform_caching
       cache = __cache
       return false unless cache
       if cache[:block]
@@ -63,7 +63,7 @@ module EasySerializer
           [klass_ins, 'EasySerialized']
         end
         fail "[Serializer] No key for cache" unless key
-        ActiveSerializer.cache.fetch(key) { _serialize }
+        EasySerializer.cache.fetch(key) { _serialize }
       end
     end
 
@@ -88,7 +88,7 @@ module EasySerializer
 
     def cache_or_serialize(serializer, content, opts)
       return unless content
-      if ActiveSerializer.perform_caching && opts[:cache]
+      if EasySerializer.perform_caching && opts[:cache]
         key = if opts[:cache_key]
           opts[:cache_key].call(content)
         else
@@ -96,7 +96,7 @@ module EasySerializer
         end
         # Be Aware
         # We are cahing the serialized object
-        ActiveSerializer.cache.fetch(key) { send_to_serializer(serializer, content) }
+        EasySerializer.cache.fetch(key) { send_to_serializer(serializer, content) }
       else
         send_to_serializer(serializer, content)
       end
