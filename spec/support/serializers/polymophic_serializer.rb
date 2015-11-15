@@ -1,5 +1,5 @@
 class PolymorphicSerializer < EasySerializer::Base
-  # cache true
+  cache true
   attribute :segment_type do |object|
     object.subject.class.name
   end
@@ -15,10 +15,6 @@ class PolymorphicSerializer < EasySerializer::Base
   def serializer_for_subject
     namespace = self.class.name.gsub(self.class.name.demodulize, '')
     object_name = klass_ins.subject_type.demodulize
-    if const = "#{namespace}#{object_name}Serializer".safe_constantize
-      const
-    else
-      "#{object_name}Serializer".constantize
-    end
+    "#{namespace}#{object_name}Serializer".constantize
   end
 end

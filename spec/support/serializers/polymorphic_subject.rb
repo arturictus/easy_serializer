@@ -1,12 +1,13 @@
-class PolymophicSubjectSerializer < EasySerializer::Base
-  attribute :id do |object|
-    "#{object.class}/#{rand(1278)}"
+class PolymophicSubject
+  def initialize
+    {
+      nested: OpenStruct.new(name: 'my name', id: rand(999)),
+      collection: [OpenStruct.new(name: 'my name', id: rand(999))],
+      record_locator: 'ajsdlf',
+      seat: 'B12',
+      confirmation_number: '198374'
+    }.each do |k, v|
+      define_singleton_method(k){ v }
+    end
   end
-  attribute :nested, serializer: Pathify::NestedSerializer, cache: true
-  attribute :collection, serializer: Pathify::CollectionSerializer, cache: true
-  attribute :record_locator, key: :booking_number
-  attribute :confirmation_number do |object|
-    object.provider_confirmation_number || object.booking_confirmation_number
-  end
-  attribute :seat
 end
