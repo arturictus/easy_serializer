@@ -1,5 +1,7 @@
 # EasySerializer
 
+[ ![Codeship Status for arturictus/easy_serializer](https://codeship.com/projects/5a101d20-6dda-0133-b7b2-666194911eaf/status?branch=master)](https://codeship.com/projects/115737)
+
 Semantic serializer for making easy serializing objects.
 
 ## Installation
