@@ -1,8 +1,6 @@
 # EasySerializer
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/easy_serializer`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Semantic serializer for making easy serializing objects.
 
 ## Installation
 
@@ -22,7 +20,38 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+example:
+_serializer:_
+```ruby
+class PolymorphicSerializer < EasySerializer::Base
+  cache true
+  attribute :segment_type do |object|
+    object.subject.class.name.demodulize
+  end
+  attribute :segment_id do |object|
+    object.id
+  end
+  attributes :initial_date,
+             :end_date
+
+  attribute :subject,
+            key: false,
+            serializer: proc {|serializer| serializer.serializer_for_subject },
+            cache: true
+  collection :elements, serializer: ElementsSerializer, cache: true
+
+  def serializer_for_subject
+    namespace = self.class.name.gsub(self.class.name.demodulize, '')
+    object_name = klass_ins.subject_type.demodulize
+    "#{namespace}#{object_name}Serializer".constantize
+  end
+end
+```
+
+```ruby
+PolymorphicSerializer.new(Polymorphic.last).serialize
+# => Hash with the object serialized  
+```
 
 ## Development
 
@@ -38,4 +67,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
