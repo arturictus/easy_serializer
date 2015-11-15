@@ -1,6 +1,8 @@
 # EasySerializer
 
 [ ![Codeship Status for arturictus/easy_serializer](https://codeship.com/projects/5a101d20-6dda-0133-b7b2-666194911eaf/status?branch=master)](https://codeship.com/projects/115737)
+[![Code Climate](https://codeclimate.com/github/arturictus/easy_serializer/badges/gpa.svg)](https://codeclimate.com/github/arturictus/easy_serializer)
+[![Test Coverage](https://codeclimate.com/github/arturictus/easy_serializer/badges/coverage.svg)](https://codeclimate.com/github/arturictus/easy_serializer/coverage)
 
 Semantic serializer for making easy serializing objects.
 
