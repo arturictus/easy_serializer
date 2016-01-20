@@ -1,11 +1,3 @@
-require 'spec_helper'
-[
-  "./spec/support/serializers/nested_serializer.rb",
-  "./spec/support/serializers/polymorphic_subject.rb",
-  "./spec/support/serializers/polymorphic_subject_serializer.rb",
-  "./spec/support/serializers/polymophic_serializer.rb"
-].each{ |f| require f }
-
 describe PolymorphicSerializer do
   let(:attrs) do
     {
