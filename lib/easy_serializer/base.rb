@@ -7,6 +7,11 @@ module EasySerializer
     end
 
     class << self
+
+      def call(obj)
+        new(obj).serialize
+      end
+
       def attribute(name, opts = {}, &block)
         @__serializable_attributes ||= []
         @__serializable_attributes << { name: name, block: block }.merge(opts)
@@ -77,12 +82,20 @@ module EasySerializer
 
     def attr_serializer(setup)
       return setup[:block].call(klass_ins) if setup[:block]
-      content = klass_ins.send(setup[:name])
+      content = cached_attribute(klass_ins, setup, setup[:cache_options])
       return content unless serializer = setup[:serializer]
       if setup[:collection]
-        content.map { |o|  cache_or_serialize(serializer, o, setup) }
+        Array.wrap(content).map { |o|  cache_or_serialize(serializer, o, setup) }
       else
         cache_or_serialize(serializer, content, setup)
+      end
+    end
+
+    def cached_attribute(obj, setup, opts = {})
+      if EasySerializer.perform_caching && setup[:cache] && !setup[:serializer]
+        EasySerializer.cache.fetch(obj, setup[:name]) { obj.send(setup[:name]) }
+      else
+        obj.send(setup[:name])
       end
     end
 
@@ -95,7 +108,7 @@ module EasySerializer
           [content, 'EasySerialized']
         end
         # Be Aware
-        # We are cahing the serialized object
+        # We are caching the serialized object
         EasySerializer.cache.fetch(key) { send_to_serializer(serializer, content) }
       else
         send_to_serializer(serializer, content)

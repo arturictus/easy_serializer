@@ -1,5 +1,5 @@
 class CacheMock
-  def self.fetch(name, &block)
+  def self.fetch(obj, opts = {}, &block)
     :cached
   end
 end
