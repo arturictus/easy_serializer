@@ -9,3 +9,8 @@ end
 class CacheMethodExample < EasySerializer::Base
   attribute :costly, cache: true
 end
+class CacheBlockExample < EasySerializer::Base
+  attribute :costly, cache: true do |obj|
+    obj.costly
+  end
+end

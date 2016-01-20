@@ -81,8 +81,7 @@ module EasySerializer
     end
 
     def attr_serializer(setup)
-      return setup[:block].call(klass_ins) if setup[:block]
-      content = cached_attribute(klass_ins, setup, setup[:cache_options])
+      content = cache_or_attribute(klass_ins, setup)
       return content unless serializer = setup[:serializer]
       if setup[:collection]
         Array.wrap(content).map { |o|  cache_or_serialize(serializer, o, setup) }
@@ -91,11 +90,12 @@ module EasySerializer
       end
     end
 
-    def cached_attribute(obj, setup, opts = {})
+    def cache_or_attribute(obj, setup)
+      execute = setup[:block] || proc { |o| o.send(setup[:name]) }
       if EasySerializer.perform_caching && setup[:cache] && !setup[:serializer]
-        EasySerializer.cache.fetch(obj, setup[:name]) { obj.send(setup[:name]) }
+        EasySerializer.cache.fetch(obj, setup[:name]) { execute.call(obj) }
       else
-        obj.send(setup[:name])
+        execute.call(obj)
       end
     end
 

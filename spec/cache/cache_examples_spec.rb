@@ -29,6 +29,30 @@ describe 'cache Examples' do
     let(:serialized) { described_class.call(obj) }
     it { expect{ serialized }.not_to raise_error }
     it { expect(serialized.fetch(:costly)).to eq(:cached) }
+    context 'cache returning the content' do
+      let(:my_cache) { CacheMockExplicid }
+      before do
+        allow(EasySerializer).to receive(:cache).and_return(my_cache)
+        expect(my_cache).to receive(:fetch).and_call_original
+      end
+      it { expect(serialized.fetch(:costly)).to eq(obj.costly) }
+    end
+  end
+  describe CacheBlockExample do
+    let(:obj) do
+      OpenStruct.new(costly: 'really long processing method')
+    end
+    let(:serialized) { described_class.call(obj) }
+    it { expect{ serialized }.not_to raise_error }
+    it { expect(serialized.fetch(:costly)).to eq(:cached) }
+    context 'cache returning the content' do
+      let(:my_cache) { CacheMockExplicid }
+      before do
+        allow(EasySerializer).to receive(:cache).and_return(my_cache)
+        expect(my_cache).to receive(:fetch).and_call_original
+      end
+      it { expect(serialized.fetch(:costly)).to eq(obj.costly) }
+    end
   end
 
 end
