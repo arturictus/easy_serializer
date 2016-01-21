@@ -11,6 +11,9 @@ module EasySerializer
       def call(obj)
         new(obj).serialize
       end
+      alias_method :serialize, :call
+      alias_method :to_hash, :call
+      alias_method :to_h, :call
 
       def attribute(name, opts = {}, &block)
         @__serializable_attributes ||= []
