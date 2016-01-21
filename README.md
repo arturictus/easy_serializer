@@ -69,7 +69,7 @@ UserSerializer.call(user)
   surname: 'Doe'
 }
 ```
-** Using blocks: **
+**Using blocks:**
 
 ```ruby
 class UserSerializer < EasySerializer::Base
@@ -78,7 +78,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-** Changing keys: **
+**Changing keys:**
 
 ```ruby
 class UserSerializer < EasySerializer::Base
@@ -151,9 +151,9 @@ UserSerializer.call(user)
 
 ### Cache
 
-** Important ** cache will only work if is set in the configuration file.
+**Important** cache will only work if is set in the configuration file.
 
-** Caching the serialized object: **
+**Caching the serialized object:**
 Serialization will happen only once and the result hash will be stored in the cache.
 ```ruby
 class UserSerializer < EasySerializer::Base
@@ -162,7 +162,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-** Caching attributes: **
+**Caching attributes:**
 Attributes can be cached independently.
 
 ```ruby
@@ -183,7 +183,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-** Caching Collections: **
+**Caching Collections:**
 
 Cache will try to fetch the cached object in the collection one by one **collection is not cached**.
 
