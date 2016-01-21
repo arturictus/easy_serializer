@@ -32,6 +32,7 @@ Or install it yourself as:
     $ gem install easy_serializer
 
 Add the configuration file:
+Only if you need caching.
 _If your are in a Rails environment place this file at config/initializers_
 
 ```ruby
@@ -47,6 +48,8 @@ EasySerializer.setup do |config|
   #
   # Set your caching tool for the serializer
   # must respond to fetch(obj, opts, &block) like Rails Cache.
+  # default: nil
+  #
   # config.cache = Rails.cache
 end
 ```
@@ -118,6 +121,36 @@ UserSerializer.call(user)
     country: 'Wonderland'
   }
 }
+```
+
+**Removing keys from nested hashes:**
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute :name, :lastname
+  attribute :address,
+            key: false,
+            serializer: AddressSerializer
+end
+UserSerializer.call(user)
+# =>
+{
+  name: 'John',
+  surname: 'Doe',
+  street: 'Happy street',
+  country: 'Wonderland'
+}
+```
+
+**Serializer option accepts a Proc:**
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  attribute :address,
+            serializer: proc { |serializer| "#{serializer.klass_ins.name}Serializer" },
+            cache: true
+end
 ```
 
 ### Collection Example:
@@ -224,7 +257,7 @@ end
 
 ```ruby
 PolymorphicSerializer.call(Polymorphic.last)
-# => Hash with the object serialized  
+# => Hash with the object serialized
 ```
 
 ## Development
