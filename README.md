@@ -32,7 +32,9 @@ Or install it yourself as:
     $ gem install easy_serializer
 
 Add the configuration file:
-Only if you need caching.
+
+**Only if you need caching.**
+
 _If your are in a Rails environment place this file at config/initializers_
 
 ```ruby
@@ -187,7 +189,9 @@ UserSerializer.call(user)
 **Important** cache will only work if is set in the configuration file.
 
 **Caching the serialized object:**
+
 Serialization will happen only once and the result hash will be stored in the cache.
+
 ```ruby
 class UserSerializer < EasySerializer::Base
   cache true
@@ -196,6 +200,7 @@ end
 ```
 
 **Caching attributes:**
+
 Attributes can be cached independently.
 
 ```ruby
@@ -218,7 +223,7 @@ end
 
 **Caching Collections:**
 
-Cache will try to fetch the cached object in the collection one by one **collection is not cached**.
+Cache will try to fetch the cached object in the collection **one by one, the whole collection is not cached**.
 
 ```ruby
 class UserSerializer < EasySerializer::Base
