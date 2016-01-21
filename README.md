@@ -6,6 +6,15 @@
 
 Semantic serializer for making easy serializing objects.
 
+features:
+- Nice and simple serialization DSL.
+- Cache helpers to use with your favorite adapter like rails cache.
+
+Advantages:
+- Separated responsibility from Model class and serialization allowing multiple serializers for the same Model class, very useful for API versioning.
+- In contraposition with active model serializers with EasySerializer you can serialize any object responding to the methods you want to serialize.
+- EasySerializer is an small library with few dependencies.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,10 +31,171 @@ Or install it yourself as:
 
     $ gem install easy_serializer
 
+Add the configuration file:
+_If your are in a Rails environment place this file at config/initializers_
+
+```ruby
+EasySerializer.setup do |config|
+  # = perform_caching
+  #
+  # Enable o disable caching.
+  # default: false
+  #
+  # config.perform_caching = true
+
+  # = cache
+  #
+  # Set your caching tool for the serializer
+  # must respond to fetch(obj, opts, &block) like Rails Cache.
+  # config.cache = Rails.cache
+end
+```
+
 ## Usage
 
-example:
-_serializer:_
+### Simple example:
+
+```ruby
+user = OpenStruct.new(name: 'John', surname: 'Doe')
+
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+end
+
+UserSerializer.call(user)
+# =>
+{
+  name: 'John',
+  surname: 'Doe'
+}
+```
+** Using blocks: **
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute(:name) { |user| user.name.capitalize }
+  attribute(:surname) { |user| user.surname.capitalize }
+end
+```
+
+** Changing keys: **
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute :name, key: :named
+  attribute(:surname, key: :lastname) { |user| user.surname.capitalize }
+end
+```
+
+### Serializing attributes with serializer
+
+```ruby
+user = OpenStruct.new(
+  name: 'John',
+  surname: 'Doe',
+  address: OpenStruct.new(
+    street: 'Happy street',
+    country: 'Wonderland'
+  )
+)
+
+class AddressSerializer < EasySerializer::Base
+  attributes :street, :country
+end
+
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  collection :address, serializer: AddressSerializer
+end
+
+UserSerializer.call(user)
+# =>
+{
+  name: 'John',
+  surname: 'Doe',
+  address: {
+    street: 'Happy street',
+    country: 'Wonderland'
+  }
+}
+```
+
+### Collection Example:
+
+```ruby
+user = OpenStruct.new(
+  name: 'John',
+  surname: 'Doe',
+  emails: [
+    OpenStruct.new(address: 'hello@email.com', type: 'work')
+  ]
+)
+
+class EmailSerializer < EasySerializer::Base
+  attributes :address, :type
+end
+
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  collection :emails, serializer: EmailSerializer
+end
+
+UserSerializer.call(user)
+# =>
+{
+  name: 'John',
+  surname: 'Doe',
+  emails: [ { address: 'hello@email.com', type: 'work' } ]
+}
+```
+
+### Cache
+
+** Important ** cache will only work if is set in the configuration file.
+
+** Caching the serialized object: **
+Serialization will happen only once and the result hash will be stored in the cache.
+```ruby
+class UserSerializer < EasySerializer::Base
+  cache true
+  attributes :name, :surname
+end
+```
+
+** Caching attributes: **
+Attributes can be cached independently.
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  attribute :costly_query, cache: true
+end
+```
+
+of course it works with blocks:
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  attribute(:costly_query, cache: true) do |user|
+    user.best_friends
+  end
+end
+```
+
+** Caching Collections: **
+
+Cache will try to fetch the cached object in the collection one by one **collection is not cached**.
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attributes :name, :surname
+  collection :address, serializer: AddressSerializer, cache: true
+end
+```
+
+### Complex example using all features:
+
 ```ruby
 class PolymorphicSerializer < EasySerializer::Base
   cache true
@@ -40,7 +210,7 @@ class PolymorphicSerializer < EasySerializer::Base
 
   attribute :subject,
             key: false,
-            serializer: proc {|serializer| serializer.serializer_for_subject },
+            serializer: proc { |serializer| serializer.serializer_for_subject },
             cache: true
   collection :elements, serializer: ElementsSerializer, cache: true
 
@@ -53,7 +223,7 @@ end
 ```
 
 ```ruby
-PolymorphicSerializer.new(Polymorphic.last).serialize
+PolymorphicSerializer.call(Polymorphic.last)
 # => Hash with the object serialized  
 ```
 
