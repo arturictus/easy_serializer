@@ -76,10 +76,28 @@ UserSerializer.call(user)
 ```
 **Using blocks:**
 
+Object being serialized is pass in the block as a first argument.
+
 ```ruby
 class UserSerializer < EasySerializer::Base
   attribute(:name) { |user| user.name.capitalize }
   attribute(:surname) { |user| user.surname.capitalize }
+end
+```
+
+**Using helpers in blocks:**
+
+Blocks are executed in the serializer instance, this way you can build your helpers and use them inside the blocks.
+
+```ruby
+class BlockExample < EasySerializer::Base
+  attribute :name do |object|
+    upcase object.name
+  end
+
+  def upcase(str)
+    str.upcase
+  end
 end
 ```
 
@@ -144,14 +162,18 @@ UserSerializer.call(user)
 }
 ```
 
-**Serializer option accepts a Proc:**
+**Serializer option accepts a Block:**
+
+The block will be executed in the Serializer instance.
 
 ```ruby
-class UserSerializer < EasySerializer::Base
-  attributes :name, :surname
-  attribute :address,
-            serializer: proc { |serializer| "#{serializer.object.name}Serializer" },
-            cache: true
+class DynamicSerializer < EasySerializer::Base
+  attribute :thing, serializer: proc { serializer_for_object }
+  attribute :d_name
+
+  def serializer_for_object
+    "#{object.class.name}Serializer".classify
+  end
 end
 ```
 

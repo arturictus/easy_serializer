@@ -84,7 +84,7 @@ module EasySerializer
     end
 
     def attr_serializer(setup)
-      content = cache_or_attribute(object, setup)
+      content = cache_or_attribute(setup)
       return content unless serializer = setup[:serializer]
       if setup[:collection]
         Array.wrap(content).map { |o|  cache_or_serialize(serializer, o, setup) }
@@ -93,14 +93,14 @@ module EasySerializer
       end
     end
 
-    def cache_or_attribute(obj, setup)
+    def cache_or_attribute(setup)
       execute = setup[:block] || proc { |o| o.send(setup[:name]) }
       if EasySerializer.perform_caching && setup[:cache] && !setup[:serializer]
-        EasySerializer.cache.fetch(obj, setup[:name]) do
-          instance_exec obj, &execute
+        EasySerializer.cache.fetch(object, setup[:name]) do
+          instance_exec object, &execute
         end
       else
-        instance_exec obj, &execute
+        instance_exec object, &execute
       end
     end
 
@@ -123,7 +123,7 @@ module EasySerializer
     def from_setup_serializer(serializer, content)
       case serializer
       when Proc
-        serializer.call(self, object, content)
+        instance_exec object, content, &serializer
       else
         serializer
       end
@@ -131,7 +131,7 @@ module EasySerializer
 
     def send_to_serializer(serializer, content)
       return unless content
-      from_setup_serializer(serializer, content).new(content).serialize
+      from_setup_serializer(serializer, content).call(content)
     end
   end
 end

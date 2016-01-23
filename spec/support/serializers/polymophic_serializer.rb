@@ -9,7 +9,7 @@ class PolymorphicSerializer < EasySerializer::Base
   attribute :date
   attribute :subject,
             key: false,
-            serializer: proc {|serializer| serializer.serializer_for_subject },
+            serializer: proc { serializer_for_subject },
             cache: true
 
   def serializer_for_subject
