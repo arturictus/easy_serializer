@@ -92,7 +92,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-### Serializing attributes with serializer
+### Serializing nested objects
 
 ```ruby
 user = OpenStruct.new(
@@ -110,7 +110,7 @@ end
 
 class UserSerializer < EasySerializer::Base
   attributes :name, :surname
-  collection :address, serializer: AddressSerializer
+  attribute :address, serializer: AddressSerializer
 end
 
 UserSerializer.call(user)
@@ -190,7 +190,7 @@ UserSerializer.call(user)
 
 **Caching the serialized object:**
 
-Serialization will happen only once and the result hash will be stored in the cache.
+Serialization will happen only once and the resulting hash will be stored in the cache.
 
 ```ruby
 class UserSerializer < EasySerializer::Base
@@ -232,7 +232,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-### Complex example using all features:
+### Complex example using all features
 
 ```ruby
 class PolymorphicSerializer < EasySerializer::Base
@@ -253,9 +253,8 @@ class PolymorphicSerializer < EasySerializer::Base
   collection :elements, serializer: ElementsSerializer, cache: true
 
   def serializer_for_subject
-    namespace = self.class.name.gsub(self.class.name.demodulize, '')
     object_name = klass_ins.subject_type.demodulize
-    "#{namespace}#{object_name}Serializer".constantize
+    "#{object_name}Serializer".constantize
   end
 end
 ```
