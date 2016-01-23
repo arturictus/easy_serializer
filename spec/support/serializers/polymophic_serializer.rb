@@ -14,7 +14,7 @@ class PolymorphicSerializer < EasySerializer::Base
 
   def serializer_for_subject
     namespace = self.class.name.gsub(self.class.name.demodulize, '')
-    object_name = klass_ins.subject_type.demodulize
+    object_name = object.subject_type.demodulize
     "#{namespace}#{object_name}Serializer".constantize
   end
 end

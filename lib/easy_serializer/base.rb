@@ -1,9 +1,9 @@
 module EasySerializer
   class Base
     delegate :to_json, :[], to: :serialize
-    attr_reader :klass_ins
-    def initialize(klass_ins)
-      @klass_ins = klass_ins
+    attr_reader :object
+    def initialize(object)
+      @object = object
     end
 
     class << self
@@ -48,12 +48,12 @@ module EasySerializer
     private
 
     def _serialize
-      __serializable_attributes.each_with_object(HashWithIndifferentAccess.new) do |setup, object|
+      __serializable_attributes.each_with_object(HashWithIndifferentAccess.new) do |setup, hash|
         if setup[:key] === false
-          object.merge!(attr_serializer(setup))
+          hash.merge!(attr_serializer(setup))
         else
           key = (setup[:key] ? setup[:key] : setup[:name])
-          object[key] = attr_serializer(setup)
+          hash[key] = attr_serializer(setup)
         end
       end
     end
@@ -63,12 +63,12 @@ module EasySerializer
       cache = __cache
       return false unless cache
       if cache[:block]
-        cache[:block].call(klass_ins, self)
+        cache[:block].call(object, self)
       else
         key = if cache[:key]
-          cache[:key].call(klass_ins)
+          cache[:key].call(object)
         else
-          [klass_ins, 'EasySerialized']
+          [object, 'EasySerialized']
         end
         fail "[Serializer] No key for cache" unless key
         EasySerializer.cache.fetch(key) { _serialize }
@@ -84,7 +84,7 @@ module EasySerializer
     end
 
     def attr_serializer(setup)
-      content = cache_or_attribute(klass_ins, setup)
+      content = cache_or_attribute(object, setup)
       return content unless serializer = setup[:serializer]
       if setup[:collection]
         Array.wrap(content).map { |o|  cache_or_serialize(serializer, o, setup) }
@@ -96,9 +96,11 @@ module EasySerializer
     def cache_or_attribute(obj, setup)
       execute = setup[:block] || proc { |o| o.send(setup[:name]) }
       if EasySerializer.perform_caching && setup[:cache] && !setup[:serializer]
-        EasySerializer.cache.fetch(obj, setup[:name]) { execute.call(obj) }
+        EasySerializer.cache.fetch(obj, setup[:name]) do
+          instance_exec obj, &execute
+        end
       else
-        execute.call(obj)
+        instance_exec obj, &execute
       end
     end
 
@@ -121,7 +123,7 @@ module EasySerializer
     def from_setup_serializer(serializer, content)
       case serializer
       when Proc
-        serializer.call(self, klass_ins, content)
+        serializer.call(self, object, content)
       else
         serializer
       end

@@ -150,7 +150,7 @@ UserSerializer.call(user)
 class UserSerializer < EasySerializer::Base
   attributes :name, :surname
   attribute :address,
-            serializer: proc { |serializer| "#{serializer.klass_ins.name}Serializer" },
+            serializer: proc { |serializer| "#{serializer.object.name}Serializer" },
             cache: true
 end
 ```
@@ -253,7 +253,7 @@ class PolymorphicSerializer < EasySerializer::Base
   collection :elements, serializer: ElementsSerializer, cache: true
 
   def serializer_for_subject
-    object_name = klass_ins.subject_type.demodulize
+    object_name = object.subject_type.demodulize
     "#{object_name}Serializer".constantize
   end
 end
