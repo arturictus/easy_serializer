@@ -105,8 +105,8 @@ end
 
 ```ruby
 class UserSerializer < EasySerializer::Base
-  attribute :name, key: :named
-  attribute(:surname, key: :lastname) { |user| user.surname.capitalize }
+  attribute :name, key: :first_name
+  attribute(:surname, key: :last_name) { |user| user.surname.capitalize }
 end
 ```
 
@@ -175,6 +175,25 @@ class DynamicSerializer < EasySerializer::Base
     "#{object.class.name}Serializer".classify
   end
 end
+```
+Inside the block is yielded the value of the method
+
+```ruby
+thing = OpenStruct.new(name: 'rigoverto', serializer: 'ThingSerializer')
+obj = OpenStruct.new(d_name: 'a name', thing: thing)
+
+class DynamicWithContentSerializer < EasySerializer::Base
+  attribute :thing,
+            serializer: proc { |value| to_const value.serializer }
+            # => block will output ThingSerializer
+  attribute :d_name
+
+  def to_const(str)
+    Class.const_get str.classify
+  end
+end
+
+DynamicWithContentSerializer.call(obj)
 ```
 
 ### Collection Example:

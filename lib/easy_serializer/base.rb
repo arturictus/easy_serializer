@@ -112,8 +112,6 @@ module EasySerializer
         else
           [value, 'EasySerialized']
         end
-        # Be Aware
-        # We are caching the serialized object
         EasySerializer.cache.fetch(key) { send_to_serializer(serializer, value) }
       else
         send_to_serializer(serializer, value)
