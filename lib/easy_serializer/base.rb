@@ -84,12 +84,12 @@ module EasySerializer
     end
 
     def attr_serializer(setup)
-      content = cache_or_attribute(setup)
-      return content unless serializer = setup[:serializer]
+      value = cache_or_attribute(setup)
+      return value unless serializer = setup[:serializer]
       if setup[:collection]
-        Array.wrap(content).map { |o|  cache_or_serialize(serializer, o, setup) }
+        Array.wrap(value).map { |o|  cache_or_serialize(serializer, o, setup) }
       else
-        cache_or_serialize(serializer, content, setup)
+        cache_or_serialize(serializer, value, setup)
       end
     end
 
@@ -104,34 +104,34 @@ module EasySerializer
       end
     end
 
-    def cache_or_serialize(serializer, content, opts)
-      return unless content
+    def cache_or_serialize(serializer, value, opts)
+      return unless value
       if EasySerializer.perform_caching && opts[:cache]
         key = if opts[:cache_key]
-          opts[:cache_key].call(content)
+          opts[:cache_key].call(value)
         else
-          [content, 'EasySerialized']
+          [value, 'EasySerialized']
         end
         # Be Aware
         # We are caching the serialized object
-        EasySerializer.cache.fetch(key) { send_to_serializer(serializer, content) }
+        EasySerializer.cache.fetch(key) { send_to_serializer(serializer, value) }
       else
-        send_to_serializer(serializer, content)
+        send_to_serializer(serializer, value)
       end
     end
 
-    def from_setup_serializer(serializer, content)
+    def from_setup_serializer(serializer, value)
       case serializer
       when Proc
-        instance_exec object, content, &serializer
+        instance_exec value, &serializer
       else
         serializer
       end
     end
 
-    def send_to_serializer(serializer, content)
-      return unless content
-      from_setup_serializer(serializer, content).call(content)
+    def send_to_serializer(serializer, value)
+      return unless value
+      from_setup_serializer(serializer, value).call(value)
     end
   end
 end
