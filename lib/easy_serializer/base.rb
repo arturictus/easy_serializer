@@ -1,5 +1,7 @@
 module EasySerializer
   class Base
+    include Helpers
+
     delegate :to_json, :[], to: :serialize
     attr_reader :object
     def initialize(object)
@@ -95,10 +97,8 @@ module EasySerializer
 
     def cache_or_attribute(setup)
       execute = setup[:block] || proc { |o| o.send(setup[:name]) }
-      if EasySerializer.perform_caching && setup[:cache] && !setup[:serializer]
-        EasySerializer.cache.fetch(object, setup[:name]) do
-          instance_exec object, &execute
-        end
+      if EasySerializer.perform_caching && setup[:cache]
+        Cacher.call(self, object, setup, execute, nil)
       else
         instance_exec object, &execute
       end
@@ -107,29 +107,23 @@ module EasySerializer
     def cache_or_serialize(serializer, value, opts)
       return unless value
       if EasySerializer.perform_caching && opts[:cache]
-        key = if opts[:cache_key]
-          opts[:cache_key].call(value)
-        else
-          [value, 'EasySerialized']
-        end
-        EasySerializer.cache.fetch(key) { send_to_serializer(serializer, value) }
+        Cacher.call(self, object, opts, nil, value)
+        # # binding.pry
+        # key = if opts[:cache_key]
+        #   option_to_value(opts[:cache_key], value)
+        # else
+        #   [value, 'EasySerialized']
+        # end
+        # EasySerializer.cache.fetch(key) { send_to_serializer(serializer, value) }
       else
         send_to_serializer(serializer, value)
       end
     end
 
-    def from_setup_serializer(serializer, value)
-      case serializer
-      when Proc
-        instance_exec value, &serializer
-      else
-        serializer
-      end
-    end
 
     def send_to_serializer(serializer, value)
       return unless value
-      from_setup_serializer(serializer, value).call(value)
+      option_to_value(serializer, value).call(value)
     end
   end
 end

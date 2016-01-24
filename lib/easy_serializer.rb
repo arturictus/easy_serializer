@@ -12,4 +12,6 @@ module EasySerializer
   config_accessor(:cache)
 end
 
+require 'easy_serializer/helpers'
+require 'easy_serializer/cacher'
 require 'easy_serializer/base'

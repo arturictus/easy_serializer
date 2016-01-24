@@ -59,4 +59,21 @@ describe 'Block Binding' do
     #   it { expect(result.fetch(:d_name)).to eq obj.d_name }
     # end
   end
+
+  describe 'Chache key block' do
+    class CacheKeyExample < EasySerializer::Base
+      attribute :name, cache: true, cache_key: proc { |value|
+        binding.pry
+        value }
+    end
+    let(:cache) { CacheMock }
+    let(:obj) { OpenStruct.new(name: 'hello') }
+    before do
+      allow(EasySerializer).to receive(:perform_caching).and_return(true)
+      allow(EasySerializer).to receive(:cache).and_return(cache)
+      expect(cache).to receive(:fetch).with('hello')
+    end
+    let(:execute) { CacheKeyExample.call(obj) }
+    it { execute }
+  end
 end
