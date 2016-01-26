@@ -62,9 +62,7 @@ describe 'Block Binding' do
 
   describe 'Chache key block' do
     class CacheKeyExample < EasySerializer::Base
-      attribute :name, cache: true, cache_key: proc { |value|
-        binding.pry
-        value }
+      attribute :name, cache: true, cache_key: proc { |value| value }
     end
     let(:cache) { CacheMock }
     let(:obj) { OpenStruct.new(name: 'hello') }

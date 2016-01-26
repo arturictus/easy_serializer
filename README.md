@@ -251,13 +251,37 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-of course it works with blocks:
+Of course it works with blocks:
 
 ```ruby
 class UserSerializer < EasySerializer::Base
   attributes :name, :surname
   attribute(:costly_query, cache: true) do |user|
     user.best_friends
+  end
+end
+```
+
+Passing cache key:
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute(:costly_query, cache: true, cache_key: 'hello') do |user|
+    user.best_friends
+  end
+end
+```
+
+Passing cache key block:
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute(
+    :costly_query,
+    cache: true,
+    cache_key: proc { |object| [object, 'costly_query'] }
+    ) do |user|
+      user.best_friends
   end
 end
 ```

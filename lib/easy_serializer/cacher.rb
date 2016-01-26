@@ -6,23 +6,30 @@ module EasySerializer
       new(serializer, object, options, block, value).execute
     end
 
-    def execute
-      key = if options[:cache_key]
-        option_to_value(options[:cache_key], value)
-      else
-        [value, 'EasySerialized']
+    def initialize(*args)
+      super
+      if value.nil?
+        self.value = serializer.instance_exec object, &block
       end
-      if options[:serializer] && options[:cache_key]
-        # binding.pry
-        EasySerializer.cache.fetch(key) { serializer.send_to_serializer(options[:serializer], value) }
-      elsif !options[:serializer]
-        EasySerializer.cache.fetch(object, options[:name]) do
-          serializer.instance_exec object, &block
-        end
-      elsif options[:serializer]
-        EasySerializer.cache.fetch(key) { serializer.send_to_serializer(options[:serializer], value) }
-      end
+    end
 
+    def key
+      @key ||= if options[:cache_key]
+                 option_to_value(options[:cache_key], value)
+               elsif options[:serializer]
+                 [value, 'EasySerialized'].flatten
+               else
+                 [value, options[:name], 'EasySerialized'].flatten
+               end
+    end
+
+    def execute
+      to_execute = if options[:serializer]
+        proc { serializer.send_to_serializer(options[:serializer], value) }
+      elsif !options[:serializer]
+        proc { serializer.instance_exec object, &block }
+      end
+      EasySerializer.cache.fetch(key, &to_execute)
     end
   end
 end

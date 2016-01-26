@@ -89,7 +89,7 @@ module EasySerializer
       value = cache_or_attribute(setup)
       return value unless serializer = setup[:serializer]
       if setup[:collection]
-        Array.wrap(value).map { |o|  cache_or_serialize(serializer, o, setup) }
+        Array.wrap(value).map { |o| cache_or_serialize(serializer, o, setup) }
       else
         cache_or_serialize(serializer, value, setup)
       end
@@ -108,13 +108,6 @@ module EasySerializer
       return unless value
       if EasySerializer.perform_caching && opts[:cache]
         Cacher.call(self, object, opts, nil, value)
-        # # binding.pry
-        # key = if opts[:cache_key]
-        #   option_to_value(opts[:cache_key], value)
-        # else
-        #   [value, 'EasySerialized']
-        # end
-        # EasySerializer.cache.fetch(key) { send_to_serializer(serializer, value) }
       else
         send_to_serializer(serializer, value)
       end
