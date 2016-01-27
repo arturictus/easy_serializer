@@ -9,11 +9,9 @@ module EasySerializer
     end
 
     def self.root_call(serializer, options, value, &block)
-      cacher = Cacher.new(serializer)
       options[:cache_key] = options[:key]
       options[:root_call] = true
-      cacher.set(options: options, block: block, value: value)
-      cacher.execute
+      call(serializer, options, value, &block)
     end
 
     attr_accessor :object, :options, :block
