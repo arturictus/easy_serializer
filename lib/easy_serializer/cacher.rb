@@ -1,22 +1,40 @@
 module EasySerializer
-  Cacher = Struct.new(:serializer, :object, :options, :block, :value) do
+  Cacher = Struct.new(:serializer) do
     include Helpers
 
-    def self.call(serializer, object, options, block, value)
-      new(serializer, object, options, block, value).execute
+    def self.call(serializer, options, value, &block)
+      cacher = Cacher.new(serializer)
+      cacher.set(options: options, block: block, value: value)
+      cacher.execute
     end
 
-    def initialize(*args)
-      super
-      if value.nil?
-        self.value = serializer.instance_exec object, &block
-      end
+    def self.root_call(serializer, options, value, &block)
+      cacher = Cacher.new(serializer)
+      options[:cache_key] = options[:key]
+      options[:root_call] = true
+      cacher.set(options: options, block: block, value: value)
+      cacher.execute
     end
+
+    attr_accessor :object, :options, :block
+    attr_writer :value
+
+    delegate :object, to: :serializer
+
+    def set(options)
+      options.each { |k, v| send("#{k}=", v) }
+    end
+
+    def value
+      return unless object && block
+      @value ||= serializer.instance_exec object, &block
+    end
+
 
     def key
       @key ||= if options[:cache_key]
-                 option_to_value(options[:cache_key], value)
-               elsif options[:serializer]
+                 option_to_value(options[:cache_key], value, serializer)
+               elsif options[:serializer] || options[:root_call]
                  [value, 'EasySerialized'].flatten
                else
                  [value, options[:name], 'EasySerialized'].flatten

@@ -64,17 +64,7 @@ module EasySerializer
       return false unless EasySerializer.perform_caching
       cache = __cache
       return false unless cache
-      if cache[:block]
-        cache[:block].call(object, self)
-      else
-        key = if cache[:key]
-          cache[:key].call(object)
-        else
-          [object, 'EasySerialized']
-        end
-        fail "[Serializer] No key for cache" unless key
-        EasySerializer.cache.fetch(key) { _serialize }
-      end
+      Cacher.root_call(self, cache, object) { _serialize }
     end
 
     def __cache
@@ -98,7 +88,7 @@ module EasySerializer
     def cache_or_attribute(setup)
       execute = setup[:block] || proc { |o| o.send(setup[:name]) }
       if EasySerializer.perform_caching && setup[:cache]
-        Cacher.call(self, object, setup, execute, nil)
+        Cacher.call(self, setup, nil, &execute)
       else
         instance_exec object, &execute
       end
@@ -107,7 +97,7 @@ module EasySerializer
     def cache_or_serialize(serializer, value, opts)
       return unless value
       if EasySerializer.perform_caching && opts[:cache]
-        Cacher.call(self, object, opts, nil, value)
+        Cacher.call(self, opts, value)
       else
         send_to_serializer(serializer, value)
       end
