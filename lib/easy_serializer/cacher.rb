@@ -3,9 +3,9 @@ module EasySerializer
     include Helpers
 
     def self.call(serializer, options, value, &block)
-      cacher = Cacher.new(serializer)
-      cacher.set(options: options, block: block, value: value)
-      cacher.execute
+      Cacher.new(serializer)
+        .set(options: options, block: block, value: value)
+        .execute
     end
 
     def self.root_call(serializer, options, value, &block)
@@ -21,6 +21,7 @@ module EasySerializer
 
     def set(options)
       options.each { |k, v| send("#{k}=", v) }
+      self
     end
 
     def value
