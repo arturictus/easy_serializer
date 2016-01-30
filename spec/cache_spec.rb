@@ -22,7 +22,7 @@ describe 'Cache' do
     end
 
     it 'calls the cache fetch method' do
-      expect(cache).to receive(:fetch).with([user, 'EasySerialized'])
+      expect(cache).to receive(:fetch).with([user, 'EasySerialized'], instance_of(Hash))
       subject.to_h
     end
   end
@@ -44,7 +44,7 @@ describe 'Cache' do
     end
 
     it 'call fetch with the block output' do
-      expect(cache).to receive(:fetch).with([user, 'KEY_FROM_BLOCK']).and_call_original
+      expect(cache).to receive(:fetch).with([user, 'KEY_FROM_BLOCK'], instance_of(Hash)).and_call_original
       output = CacheMethodWithKey.call(user)
       expect(output).to eq :cached
     end
@@ -65,8 +65,8 @@ describe 'Cache' do
     end
 
     it 'calls the cache fetch method on collection and on attribute' do
-      expect(cache).to receive(:fetch).with([user, 'EasySerialized'])
-      expect(cache).to receive(:fetch).with([contact, 'EasySerialized'])
+      expect(cache).to receive(:fetch).with([user, 'EasySerialized'], instance_of(Hash))
+      expect(cache).to receive(:fetch).with([contact, 'EasySerialized'], instance_of(Hash))
       subject.to_h
     end
 
@@ -88,7 +88,7 @@ describe 'Cache' do
       before do
         allow(EasySerializer).to receive(:perform_caching).and_return(true)
         allow(EasySerializer).to receive(:cache).and_return(cache)
-        expect(cache).to receive(:fetch).with('hello')
+        expect(cache).to receive(:fetch).with('hello', instance_of(Hash))
       end
       let(:execute) { CacheKeyExample.call(obj) }
       it { execute }

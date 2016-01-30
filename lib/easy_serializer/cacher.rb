@@ -41,11 +41,11 @@ module EasySerializer
     end
 
     def options_for_cache
-      if options[:cache_options]
-        options[:cache_options]
+      if options[:root_call]
+        options.except(:block, :cache_key, :root_call, :serializer, :key)
       else
-        options.except(:block, :cache_key, :root_call, :serializer)
-      end
+        options[:cache_options]
+      end || {}
     end
 
     def execute
