@@ -286,6 +286,38 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
+Passing options to the cache:
+
+Any option passed in the cache method not specified for EasySerializer will be
+forwarded as options to the set Cache as options for the fetch method.
+
+example:
+
+```ruby
+class OptionForRootCache < EasySerializer::Base
+  cache true, expires_in: 10.minutes, another_option: true
+  attribute :name
+end
+```
+
+Cache fetch will receive:
+
+```ruby
+EasySerializer.cache.fetch(
+  key,# object or defined key
+  expires_in: 10.minutes,
+  another_option: true
+)
+```
+
+Use **cache_options** in attributes
+
+```ruby
+class OptionForAttributeCache < EasySerializer::Base
+  attribute :name, cache: true, cache_options: { expires_in: 10.minutes }
+end
+```
+
 **Caching Collections:**
 
 Cache will try to fetch the cached object in the collection **one by one, the whole collection is not cached**.

@@ -40,13 +40,21 @@ module EasySerializer
                end
     end
 
+    def options_for_cache
+      if options[:cache_options]
+        options[:cache_options]
+      else
+        options.except(:block, :cache_key, :root_call, :serializer)
+      end
+    end
+
     def execute
       to_execute = if options[:serializer]
         proc { serializer.send_to_serializer(options[:serializer], value) }
       elsif !options[:serializer]
         proc { serializer.instance_exec object, &block }
       end
-      EasySerializer.cache.fetch(key, &to_execute)
+      EasySerializer.cache.fetch(key, options_for_cache, &to_execute)
     end
   end
 end
