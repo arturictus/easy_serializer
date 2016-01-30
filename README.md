@@ -251,7 +251,7 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
-of course it works with blocks:
+Of course it works with blocks:
 
 ```ruby
 class UserSerializer < EasySerializer::Base
@@ -259,6 +259,62 @@ class UserSerializer < EasySerializer::Base
   attribute(:costly_query, cache: true) do |user|
     user.best_friends
   end
+end
+```
+
+Passing cache key:
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute(:costly_query, cache: true, cache_key: 'hello') do |user|
+    user.best_friends
+  end
+end
+```
+
+Passing cache key block:
+
+```ruby
+class UserSerializer < EasySerializer::Base
+  attribute(
+    :costly_query,
+    cache: true,
+    cache_key: proc { |object| [object, 'costly_query'] }
+    ) do |user|
+      user.best_friends
+  end
+end
+```
+
+Passing options to the cache:
+
+Any option passed in the cache method not specified for EasySerializer will be
+forwarded as options to the set Cache as options for the fetch method.
+
+example:
+
+```ruby
+class OptionForRootCache < EasySerializer::Base
+  cache true, expires_in: 10.minutes, another_option: true
+  attribute :name
+end
+```
+
+Cache fetch will receive:
+
+```ruby
+EasySerializer.cache.fetch(
+  key,# object or defined key
+  expires_in: 10.minutes,
+  another_option: true
+)
+```
+
+Use **cache_options** in attributes
+
+```ruby
+class OptionForAttributeCache < EasySerializer::Base
+  attribute :name, cache: true, cache_options: { expires_in: 10.minutes }
 end
 ```
 

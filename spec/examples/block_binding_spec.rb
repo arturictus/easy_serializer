@@ -59,4 +59,5 @@ describe 'Block Binding' do
     #   it { expect(result.fetch(:d_name)).to eq obj.d_name }
     # end
   end
+
 end
