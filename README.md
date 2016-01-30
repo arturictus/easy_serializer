@@ -76,6 +76,8 @@ UserSerializer.call(user)
 ```
 **Using blocks:**
 
+Object being serialized is pass in the block as a first argument.
+
 ```ruby
 class UserSerializer < EasySerializer::Base
   attribute(:name) { |user| user.name.capitalize }
@@ -83,12 +85,28 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
+**Using helpers in blocks:**
+
+Blocks are executed in the serializer instance, this way you can build your helpers and use them inside the blocks.
+
+```ruby
+class BlockExample < EasySerializer::Base
+  attribute :name do |object|
+    upcase object.name
+  end
+
+  def upcase(str)
+    str.upcase
+  end
+end
+```
+
 **Changing keys:**
 
 ```ruby
 class UserSerializer < EasySerializer::Base
-  attribute :name, key: :named
-  attribute(:surname, key: :lastname) { |user| user.surname.capitalize }
+  attribute :name, key: :first_name
+  attribute(:surname, key: :last_name) { |user| user.surname.capitalize }
 end
 ```
 
@@ -144,15 +162,38 @@ UserSerializer.call(user)
 }
 ```
 
-**Serializer option accepts a Proc:**
+**Serializer option accepts a Block:**
+
+The block will be executed in the Serializer instance.
 
 ```ruby
-class UserSerializer < EasySerializer::Base
-  attributes :name, :surname
-  attribute :address,
-            serializer: proc { |serializer| "#{serializer.klass_ins.name}Serializer" },
-            cache: true
+class DynamicSerializer < EasySerializer::Base
+  attribute :thing, serializer: proc { serializer_for_object }
+  attribute :d_name
+
+  def serializer_for_object
+    "#{object.class.name}Serializer".classify
+  end
 end
+```
+Inside the block is yielded the value of the method
+
+```ruby
+thing = OpenStruct.new(name: 'rigoverto', serializer: 'ThingSerializer')
+obj = OpenStruct.new(d_name: 'a name', thing: thing)
+
+class DynamicWithContentSerializer < EasySerializer::Base
+  attribute :thing,
+            serializer: proc { |value| to_const value.serializer }
+            # => block will output ThingSerializer
+  attribute :d_name
+
+  def to_const(str)
+    Class.const_get str.classify
+  end
+end
+
+DynamicWithContentSerializer.call(obj)
 ```
 
 ### Collection Example:
@@ -253,7 +294,7 @@ class PolymorphicSerializer < EasySerializer::Base
   collection :elements, serializer: ElementsSerializer, cache: true
 
   def serializer_for_subject
-    object_name = klass_ins.subject_type.demodulize
+    object_name = object.subject_type.demodulize
     "#{object_name}Serializer".constantize
   end
 end
