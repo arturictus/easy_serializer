@@ -5,8 +5,11 @@
 [![Test Coverage](https://codeclimate.com/github/arturictus/easy_serializer/badges/coverage.svg)](https://codeclimate.com/github/arturictus/easy_serializer/coverage)
 
 Semantic serializer for making easy serializing objects.
+EasySerializer is inspired in [ActiveModel Serializer > 0.10] (https://github.com/rails-api/active_model_serializers/tree/v0.10.0.rc3) it's a
+simple solution for a day to day work with APIs.
+It tries to give you a serializer with flexibility, full of features and important capabilities for caching.
 
-features:
+Features:
 - Nice and simple serialization DSL.
 - Cache helpers to use with your favorite adapter like rails cache.
 
@@ -112,7 +115,7 @@ end
 
 **Using defaults:**
 
-Default will only be triggered when value is [nil]
+Default will only be triggered when value is `nil`
 
 ```ruby
 obj = OpenStruct.new(name: 'Jack', boolean: nil, missing: nil)

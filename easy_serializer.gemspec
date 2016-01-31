@@ -10,7 +10,9 @@ Gem::Specification.new do |spec|
   spec.email         = ["arturictus@gmail.com"]
 
   spec.summary       = %q{Semantic serializer for making easy serializing objects.}
-  spec.description   = %q{Semantic serializer for making easy serializing objects.}
+  spec.description   = %q{EasySerializer is inspired in ActiveModel Serializer > 0.10 it's a
+  simple solution for a day to day work with APIs.
+  It tries to give you a serializer with flexibility, full of features and important capabilities for caching.}
   spec.homepage      = "https://github.com/arturictus/easy_serializer"
   spec.license       = "MIT"
 
