@@ -110,6 +110,44 @@ class UserSerializer < EasySerializer::Base
 end
 ```
 
+**Using defaults:**
+
+Default will only be triggered when value is [nil]
+
+```ruby
+obj = OpenStruct.new(name: 'Jack', boolean: nil, missing: nil)
+
+class DefaultLiteral < EasySerializer::Base
+  attribute :name
+  attribute :boolean, default: true
+  attribute(:missing, default: 'anything') { |obj| obj.missing }
+end
+
+output = DefaultLiteral.call(obj)
+output.fetch(:name) #=> 'Jack'
+output.fetch(:boolean) #=> true
+output.fetch(:missing) #=> 'anything'
+```
+
+Using blocks:
+
+```ruby
+obj = OpenStruct.new(name: 'Jack', boolean: nil, missing: nil)
+
+class DefaultBlock < EasySerializer::Base
+  attribute :name
+  attribute :boolean, default: proc { |obj| obj.name == 'Jack' }
+  attribute :missing, default: proc { |obj| "#{obj.name}-missing" } do |obj|
+    obj.missing
+  end
+end
+
+output = DefaultBlock.call(obj)
+output.fetch(:name) #=> 'Jack'
+output.fetch(:boolean) #=> true
+output.fetch(:missing) #=> 'Jack-missing'
+```
+
 ### Serializing nested objects
 
 ```ruby
