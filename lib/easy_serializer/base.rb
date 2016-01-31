@@ -52,10 +52,10 @@ module EasySerializer
     def _serialize
       __serializable_attributes.each_with_object(HashWithIndifferentAccess.new) do |setup, hash|
         if setup[:key] === false
-          hash.merge!(attr_serializer(setup))
+          hash.merge!(value_or_default(setup))
         else
           key = (setup[:key] ? setup[:key] : setup[:name])
-          hash[key] = attr_serializer(setup)
+          hash[key] = value_or_default(setup)
         end
       end
     end
@@ -73,6 +73,14 @@ module EasySerializer
 
     def __serializable_attributes
       self.class.instance_variable_get(:@__serializable_attributes) || []
+    end
+
+    def value_or_default(setup)
+      value = attr_serializer(setup)
+      if value.nil? && setup[:default]
+        return option_to_value(setup[:default], object)
+      end
+      value
     end
 
     def attr_serializer(setup)

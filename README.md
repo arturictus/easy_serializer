@@ -5,8 +5,11 @@
 [![Test Coverage](https://codeclimate.com/github/arturictus/easy_serializer/badges/coverage.svg)](https://codeclimate.com/github/arturictus/easy_serializer/coverage)
 
 Semantic serializer for making easy serializing objects.
+EasySerializer is inspired in [ActiveModel Serializer > 0.10] (https://github.com/rails-api/active_model_serializers/tree/v0.10.0.rc3) it's a
+simple solution for a day to day work with APIs.
+It tries to give you a serializer with flexibility, full of features and important capabilities for caching.
 
-features:
+Features:
 - Nice and simple serialization DSL.
 - Cache helpers to use with your favorite adapter like rails cache.
 
@@ -108,6 +111,44 @@ class UserSerializer < EasySerializer::Base
   attribute :name, key: :first_name
   attribute(:surname, key: :last_name) { |user| user.surname.capitalize }
 end
+```
+
+**Using defaults:**
+
+Default will only be triggered when value is `nil`
+
+```ruby
+obj = OpenStruct.new(name: 'Jack', boolean: nil, missing: nil)
+
+class DefaultLiteral < EasySerializer::Base
+  attribute :name
+  attribute :boolean, default: true
+  attribute(:missing, default: 'anything') { |obj| obj.missing }
+end
+
+output = DefaultLiteral.call(obj)
+output.fetch(:name) #=> 'Jack'
+output.fetch(:boolean) #=> true
+output.fetch(:missing) #=> 'anything'
+```
+
+Using blocks:
+
+```ruby
+obj = OpenStruct.new(name: 'Jack', boolean: nil, missing: nil)
+
+class DefaultBlock < EasySerializer::Base
+  attribute :name
+  attribute :boolean, default: proc { |obj| obj.name == 'Jack' }
+  attribute :missing, default: proc { |obj| "#{obj.name}-missing" } do |obj|
+    obj.missing
+  end
+end
+
+output = DefaultBlock.call(obj)
+output.fetch(:name) #=> 'Jack'
+output.fetch(:boolean) #=> true
+output.fetch(:missing) #=> 'Jack-missing'
 ```
 
 ### Serializing nested objects
