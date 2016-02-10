@@ -19,12 +19,12 @@ module EasySerializer
 
       def attribute(name, opts = {}, &block)
         @__serializable_attributes ||= []
-        @__serializable_attributes << { name: name, block: block }.merge(opts)
+        @__serializable_attributes << Option.new({ name: name, block: block }.merge(opts))
       end
 
       def cache(bool, opts = {}, &block)
         if bool
-          @__cache = opts.merge(block: block)
+          @__cache = RootCacheOption.new(opts.merge(block: block))
         end
       end
 
@@ -51,10 +51,10 @@ module EasySerializer
 
     def _serialize
       __serializable_attributes.each_with_object(HashWithIndifferentAccess.new) do |setup, hash|
-        if setup[:key] === false
+        if setup.key === false
           hash.merge!(value_or_default(setup))
         else
-          key = (setup[:key] ? setup[:key] : setup[:name])
+          key = (setup.key? ? setup.key : setup.name)
           hash[key] = value_or_default(setup)
         end
       end
@@ -77,25 +77,25 @@ module EasySerializer
 
     def value_or_default(setup)
       value = attr_serializer(setup)
-      if value.nil? && setup[:default]
-        return option_to_value(setup[:default], object)
+      if value.nil? && setup.default
+        return option_to_value(setup.default, object)
       end
       value
     end
 
-    def attr_serializer(setup)
-      value = cache_or_attribute(setup)
-      return value unless serializer = setup[:serializer]
-      if setup[:collection]
-        Array.wrap(value).map { |o| cache_or_serialize(serializer, o, setup) }
+    def attr_serializer(option)
+      value = cache_or_attribute(option)
+      return value unless serializer = option.serializer
+      if option.collection
+        Array.wrap(value).map { |o| cache_or_serialize(serializer, o, option) }
       else
-        cache_or_serialize(serializer, value, setup)
+        cache_or_serialize(serializer, value, option)
       end
     end
 
     def cache_or_attribute(setup)
-      execute = setup[:block] || proc { |o| o.send(setup[:name]) }
-      if EasySerializer.perform_caching && setup[:cache]
+      execute = setup.block || proc { |o| o.send(setup.name) }
+      if EasySerializer.perform_caching && setup.cache
         Cacher.call(self, setup, nil, &execute)
       else
         instance_exec object, &execute
@@ -104,7 +104,7 @@ module EasySerializer
 
     def cache_or_serialize(serializer, value, opts)
       return unless value
-      if EasySerializer.perform_caching && opts[:cache]
+      if EasySerializer.perform_caching && opts.cache
         Cacher.call(self, opts, value)
       else
         send_to_serializer(serializer, value)

@@ -4,3 +4,4 @@ source 'https://rubygems.org'
 gemspec
 gem 'pry'
 gem 'simplecov', :require => false, :group => :test
+gem 'contextuable', github: 'arturictus/args_class'

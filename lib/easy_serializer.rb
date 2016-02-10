@@ -1,5 +1,6 @@
 require "easy_serializer/version"
 require 'active_support/all'
+require '~/code/contextuable/lib/contextuable'
 
 module EasySerializer
   include ActiveSupport::Configurable
@@ -15,3 +16,4 @@ end
 require 'easy_serializer/helpers'
 require 'easy_serializer/cacher'
 require 'easy_serializer/base'
+require 'easy_serializer/option'
