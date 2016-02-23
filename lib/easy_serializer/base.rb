@@ -47,10 +47,15 @@ module EasySerializer
     alias_method :to_hash, :serialize
     alias_method :to_s, :to_json
 
+    def send_to_serializer(serializer, value)
+      return unless value
+      option_to_value(serializer, value).call(value)
+    end
+
     private
 
     def _serialize
-      __serializable_attributes.each_with_object(HashWithIndifferentAccess.new) do |setup, hash|
+      __serializable_attributes.each_with_object({}) do |setup, hash|
         if setup[:key] === false
           hash.merge!(value_or_default(setup))
         else
@@ -85,6 +90,7 @@ module EasySerializer
 
     def attr_serializer(setup)
       value = cache_or_attribute(setup)
+      return value if value.respond_to?(:fetch) || value.respond_to?(:each)
       return value unless serializer = setup[:serializer]
       if setup[:collection]
         Array.wrap(value).map { |o| cache_or_serialize(serializer, o, setup) }
@@ -98,7 +104,11 @@ module EasySerializer
       if EasySerializer.perform_caching && setup[:cache]
         Cacher.call(self, setup, nil, &execute)
       else
-        instance_exec object, &execute
+        if object.respond_to?(:each)
+          object.map { |o| instance_exec o, &execute }
+        else
+          instance_exec object, &execute
+        end
       end
     end
 
@@ -112,9 +122,5 @@ module EasySerializer
     end
 
 
-    def send_to_serializer(serializer, value)
-      return unless value
-      option_to_value(serializer, value).call(value)
-    end
   end
 end
