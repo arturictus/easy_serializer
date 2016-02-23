@@ -1,4 +1,5 @@
 module EasySerializer
+  CacheOutput = Struct.new(:output)
   Cacher = Struct.new(:serializer) do
     include Helpers
 
@@ -54,7 +55,7 @@ module EasySerializer
       elsif !options[:serializer]
         proc { serializer.instance_exec object, &block }
       end
-      EasySerializer.cache.fetch(key, options_for_cache, &to_execute)
+      CacheOutput.new(EasySerializer.cache.fetch(key, options_for_cache, &to_execute))
     end
   end
 end

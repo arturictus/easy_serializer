@@ -21,7 +21,7 @@ module EasySerializer
 
     def attr_serializer
       value = cache_or_attribute
-      return value if value.respond_to?(:fetch) || value.respond_to?(:each)
+      return value.output if value.is_a?(CacheOutput)
       return value unless serializer = setup[:serializer]
       if setup[:collection]
         Array.wrap(value).map { |o| cache_or_serialize(serializer, o, setup) }
