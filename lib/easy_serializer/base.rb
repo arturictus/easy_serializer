@@ -69,7 +69,7 @@ module EasySerializer
       return false unless EasySerializer.perform_caching
       cache = __cache
       return false unless cache
-      Cacher.root_call(self, cache, object) { _serialize }
+      Cacher.root_call(self, cache, object) { _serialize }.output
     end
 
     def __cache
