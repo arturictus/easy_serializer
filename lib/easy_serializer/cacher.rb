@@ -30,14 +30,14 @@ module EasySerializer
       @value ||= serializer.instance_exec object, &block
     end
 
-
-    def key
+    def key(_value = nil)
+      _value ||= value
       @key ||= if options[:cache_key]
-                 option_to_value(options[:cache_key], value, serializer)
+                 option_to_value(options[:cache_key], _value, serializer)
                elsif options[:serializer] || options[:root_call]
-                 [value, 'EasySerialized'].flatten
+                 [_value, 'EasySerialized'].flatten
                else
-                 [value, options[:name], 'EasySerialized'].flatten
+                 [_value, options[:name], 'EasySerialized'].flatten
                end
     end
 
@@ -49,13 +49,32 @@ module EasySerializer
       end || {}
     end
 
-    def execute
-      to_execute = if options[:serializer]
-        proc { serializer.send_to_serializer(options[:serializer], value) }
-      elsif !options[:serializer]
+    def _block_to_execute(_value = nil)
+      _value ||= value
+      if options[:serializer]
+        proc { serializer.send_to_serializer(options[:serializer], _value) }
+      else
         proc { serializer.instance_exec object, &block }
       end
-      CacheOutput.new(EasySerializer.cache.fetch(key, options_for_cache, &to_execute))
+    end
+
+    def fetch(_key = nil, _value = nil)
+      _key ||= key
+      _value ||= value
+      EasySerializer.cache.fetch(_key, options_for_cache, &_block_to_execute(_value))
+    end
+
+    def wrap(elem)
+      CacheOutput.new(elem)
+    end
+
+    def execute
+      elem = if options[:collection]
+        Array.wrap(value).map{ |o| fetch(key(o), o) }
+      else
+        fetch
+      end
+      wrap(elem)
     end
   end
 end

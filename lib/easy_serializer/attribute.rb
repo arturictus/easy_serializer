@@ -37,7 +37,6 @@ module EasySerializer
     def cache_or_attribute
       execute = setup[:block] || method(:send_name)
       if EasySerializer.perform_caching && setup[:cache]
-        # catch!(true, value, execute)
         Cacher.call(serializer, setup, nil, &execute)
       else
         serializer.instance_exec object, &execute
