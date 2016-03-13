@@ -47,11 +47,6 @@ module EasySerializer
     alias_method :to_hash, :serialize
     alias_method :to_s, :to_json
 
-    # def send_to_serializer(serializer, value)
-    #   return unless value
-    #   option_to_value(serializer, value).call(value)
-    # end
-
     private
 
     def _serialize
@@ -69,7 +64,10 @@ module EasySerializer
       return false unless EasySerializer.perform_caching
       cache = __cache
       return false unless cache
-      Cacher.root_call(self, cache, object) { _serialize }.output
+      Cacher.new(self, nil)
+        .set(options: __cache, block: proc { self.class.call(object) })
+        .execute
+      # Cacher.root_call(self, cache, object) { _serialize }.output
     end
 
     def __cache

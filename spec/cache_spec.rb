@@ -81,18 +81,18 @@ describe 'Cache' do
   describe 'Cache Blocks' do
     describe 'chache_key block' do
       class CacheKeyExample < EasySerializer::Base
-        attribute :name, cache: true, cache_key: proc { |value| value }
+        attribute :name, cache: true, cache_key: proc { 'my_key' }
       end
       let(:cache) { CacheMock }
       let(:obj) { OpenStruct.new(name: 'hello') }
       before do
         allow(EasySerializer).to receive(:perform_caching).and_return(true)
         allow(EasySerializer).to receive(:cache).and_return(cache)
-        expect(cache).to receive(:fetch).with('hello', instance_of(Hash))
+        expect(cache).to receive(:fetch).with('my_key', instance_of(Hash))
       end
       let(:execute) { CacheKeyExample.call(obj) }
       it { execute }
-      xit 'once cached does not call to object methods' do
+      it 'once cached does not call to object methods' do
         expect(obj).not_to receive(:name)
         execute
       end

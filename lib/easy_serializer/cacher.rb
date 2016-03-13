@@ -1,7 +1,13 @@
 module EasySerializer
   CacheOutput = Struct.new(:output)
-  Cacher = Struct.new(:serializer) do
+  class Cacher
     include Helpers
+    delegate :send_to_serializer, to: :serializer
+    attr_reader :serializer, :attribute
+    def initialize(serializer, attribute)
+      @serializer = serializer
+      @attribute = attribute
+    end
 
     def self.call(serializer, options, value, &block)
       Cacher.new(serializer)
@@ -27,6 +33,7 @@ module EasySerializer
 
     def value
       return unless object && block
+      return unless options[:serializer] || options[:root_call]
       @value ||= serializer.instance_exec object, &block
     end
 
@@ -37,7 +44,7 @@ module EasySerializer
                elsif options[:serializer] || options[:root_call]
                  [_value, 'EasySerialized'].flatten
                else
-                 [_value, options[:name], 'EasySerialized'].flatten
+                 [options[:name], 'EasySerialized'].flatten
                end
     end
 
@@ -69,11 +76,11 @@ module EasySerializer
     end
 
     def execute
-      elem = if options[:collection]
-        Array.wrap(value).map{ |o| fetch(key(o), o) }
-      else
-        fetch
-      end
+      # elem = if options[:collection]
+      #   Array.wrap(value).map{ |o| fetch(key(o), o) }
+      # else
+      elem =  fetch
+      # end
       wrap(elem)
     end
   end

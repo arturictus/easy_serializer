@@ -37,7 +37,10 @@ module EasySerializer
     def cache_or_attribute
       execute = setup[:block] || method(:send_name)
       if EasySerializer.perform_caching && setup[:cache]
-        Cacher.call(serializer, setup, nil, &execute)
+        Cacher.new(serializer, self)
+          .set(options: setup, block: execute)
+          .execute
+        # Cacher.call(serializer, setup, nil, &execute)
       else
         serializer.instance_exec object, &execute
       end
@@ -48,20 +51,29 @@ module EasySerializer
       option_to_value(serializer_class, value, serializer).call(value)
     end
 
-    def catch!(attribute, value, block)
-      return unless EasySerializer.perform_caching && setup[:cache]
-      if attribute
-        Cacher.call(serializer, setup, nil, &block)
-      else
-        Cacher.call(serializer, setup, value)
-      end
-    end
+    # def catch!(attribute, value, block)
+    #   return unless EasySerializer.perform_caching && setup[:cache]
+    #   if attribute
+    #     Cacher.new(serializer, self)
+    #       .set(options: setup, block: block)
+    #       .execute
+    #     # Cacher.call(serializer, setup, nil, &block)
+    #   else
+    #     Cacher.new(serializer, self)
+    #       .set(options: setup, value: value)
+    #       .execute
+    #     # Cacher.call(serializer, setup, value)
+    #   end
+    # end
 
     def serialize!(serializer_class, value)
       return unless value
       if EasySerializer.perform_caching && setup[:cache]
         # catch!(false, value)
-        Cacher.call(serializer, setup, value)
+        Cacher.new(serializer, self)
+          .set(options: setup, value: value)
+          .execute
+        # Cacher.call(serializer, setup, value)
       else
         send_to_serializer(serializer_class, value)
       end
