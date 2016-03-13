@@ -1,5 +1,4 @@
 module EasySerializer
-  CacheOutput = Struct.new(:output)
   Cacher = Struct.new(:serializer) do
     include Helpers
 

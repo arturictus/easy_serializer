@@ -3,6 +3,7 @@ require 'active_support/all'
 
 module EasySerializer
   include ActiveSupport::Configurable
+  extend ActiveSupport::Autoload
 
   def self.setup
     yield self
@@ -10,9 +11,10 @@ module EasySerializer
 
   config_accessor(:perform_caching) { false }
   config_accessor(:cache)
-end
 
-require 'easy_serializer/helpers'
-require 'easy_serializer/cacher'
-require 'easy_serializer/attribute'
-require 'easy_serializer/base'
+  autoload :Helpers
+  autoload :Cacher
+  autoload :Attribute
+  autoload :Base
+  autoload :CacheOutput
+end
