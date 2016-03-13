@@ -17,8 +17,8 @@ describe PolymorphicSerializer do
     it { expect(subject[:date]).to eq object.date }
     context 'key: false, includes object keys at same level' do
       it { expect(subject[:date]).to eq object.date }
-      it { expect(subject).to have_key('collection') }
-      it { expect(subject).to have_key('nested') }
+      it { expect(subject).to have_key(:collection) }
+      it { expect(subject).to have_key(:nested) }
       it { expect(subject[:record_locator]).to eq object.subject.record_locator }
       it { expect(subject[:seat]).to eq object.subject.seat }
       it { expect(subject[:confirmation_number]).to eq object.subject.confirmation_number }

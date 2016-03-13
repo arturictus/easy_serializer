@@ -14,4 +14,5 @@ end
 
 require 'easy_serializer/helpers'
 require 'easy_serializer/cacher'
+require 'easy_serializer/attribute'
 require 'easy_serializer/base'
