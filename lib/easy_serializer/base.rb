@@ -47,10 +47,10 @@ module EasySerializer
     alias_method :to_hash, :serialize
     alias_method :to_s, :to_json
 
-    # def send_to_serializer(serializer, value)
-    #   return unless value
-    #   option_to_value(serializer, value).call(value)
-    # end
+    def send_to_serializer(serializer, value)
+      return unless value
+      option_to_value(serializer, value).call(value)
+    end
 
     private
 

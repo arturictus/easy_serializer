@@ -48,19 +48,9 @@ module EasySerializer
       option_to_value(serializer_class, value, serializer).call(value)
     end
 
-    def catch!(attribute, value, block)
-      return unless EasySerializer.perform_caching && setup[:cache]
-      if attribute
-        Cacher.call(serializer, setup, nil, &block)
-      else
-        Cacher.call(serializer, setup, value)
-      end
-    end
-
     def serialize!(serializer_class, value)
       return unless value
       if EasySerializer.perform_caching && setup[:cache]
-        # catch!(false, value)
         Cacher.call(serializer, setup, value)
       else
         send_to_serializer(serializer_class, value)
