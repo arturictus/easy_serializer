@@ -2,9 +2,9 @@ module EasySerializer
   Cacher = Struct.new(:serializer) do
     include Helpers
 
-    def self.call(serializer, options, value, &block)
+    def self.call(serializer, metadata, value, &block)
       Cacher.new(serializer)
-        .set(options: options, block: block, value: value)
+        .set(options: metadata.options, block: block, value: value)
         .execute
     end
 
