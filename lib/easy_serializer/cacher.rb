@@ -11,7 +11,8 @@ module EasySerializer
     def self.root_call(serializer, options, value, &block)
       options[:cache_key] = options[:key]
       options[:root_call] = true
-      call(serializer, options, value, &block)
+      metadata = OpenStruct.new(options: options)
+      call(serializer, metadata, value, &block)
     end
 
     attr_accessor :object, :options, :block

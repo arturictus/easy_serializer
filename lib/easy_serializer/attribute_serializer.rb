@@ -30,12 +30,13 @@ module EasySerializer
         serialize!(serializer_class, value)
       end
     end
+
     def send_name(obj)
       obj.send(metadata.name)
     end
 
     def cache_or_attribute
-      execute = metadata.options[:block] || method(:send_name)
+      execute = metadata.block || method(:send_name)
       if EasySerializer.perform_caching && metadata.options[:cache]
         Cacher.call(serializer, metadata, nil, &execute)
       else

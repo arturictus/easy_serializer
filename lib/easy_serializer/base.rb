@@ -59,7 +59,7 @@ module EasySerializer
         if metadata.options[:key] === false
           hash.merge!(value_or_default(metadata))
         else
-          key = (metadata.options[:key] ? metadata.options[:key] : metadata.options[:name])
+          key = (metadata.options[:key] ? metadata.options[:key] : metadata.name)
           hash[key] = value_or_default(metadata)
         end
       end
