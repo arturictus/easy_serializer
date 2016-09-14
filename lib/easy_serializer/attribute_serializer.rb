@@ -14,8 +14,10 @@ module EasySerializer
 
     def value_or_default
       value = attr_serializer
-      if value.nil? && metadata.options[:default]
-        return option_to_value(metadata.options[:default], object, serializer)
+      # Check if value is nil
+      # eval option default ( in case is block)
+      if value.nil?
+        return metadata.get_default(object, serializer)
       end
       value
     end
@@ -31,22 +33,12 @@ module EasySerializer
       end
     end
 
-    def send_name(obj)
-      obj.send(metadata.name)
-    end
-
     def cache_or_attribute
-      execute = metadata.block || method(:send_name)
       if EasySerializer.perform_caching && metadata.options[:cache]
-        Cacher.call(serializer, metadata, nil, &execute)
+        Cacher.call(serializer, metadata, nil, &metadata.get_value)
       else
-        serializer.instance_exec object, &execute
+        serializer.instance_exec object, &metadata.get_value
       end
-    end
-
-    def send_to_serializer(serializer_class, value)
-      return unless value
-      option_to_value(serializer_class, value, serializer).call(value)
     end
 
     def serialize!(serializer_class, value)
@@ -54,7 +46,7 @@ module EasySerializer
       if EasySerializer.perform_caching && metadata.options[:cache]
         Cacher.call(serializer, metadata, value)
       else
-        send_to_serializer(serializer_class, value)
+        metadata.serialize!(value, serializer)
       end
     end
   end

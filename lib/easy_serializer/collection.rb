@@ -1,5 +1,12 @@
 module EasySerializer
-  Collection  = Struct.new(:name, :_options, :block) do
+  class Collection < Field
+    attr_reader :_options, :name, :block
+    def initialize(name, options, block)
+      @name = name
+      @_options = options
+      @block = block
+    end
+
     def options
       received_opts.merge(collection: true)
     end
@@ -7,5 +14,6 @@ module EasySerializer
     def received_opts
       _options || {}
     end
+
   end
 end
