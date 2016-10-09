@@ -52,6 +52,10 @@ module EasySerializer
       option_to_value(serializer, value).call(value)
     end
 
+    def __cache
+      self.class.instance_variable_get(:@__cache)
+    end
+
     private
 
     def _serialize
@@ -69,11 +73,7 @@ module EasySerializer
       return false unless EasySerializer.perform_caching
       cache = __cache
       return false unless cache
-      Cacher.root_call(self, cache, object) { _serialize }.output
-    end
-
-    def __cache
-      self.class.instance_variable_get(:@__cache)
+      RootCacher.call(self){ _serialize }
     end
 
     def __serializable_attributes
