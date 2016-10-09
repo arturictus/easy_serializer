@@ -1,11 +1,6 @@
 module EasySerializer
   class Cacher
-    class Collection
-      attr_reader :cacher
-      delegate :serializer, :metadata, to: :cacher
-      def initialize(cacher)
-        @cacher = cacher
-      end
+    class Collection < Template
 
       def execute
         collection.map do |elem|
@@ -18,6 +13,7 @@ module EasySerializer
       end
 
       def key(elem)
+        # TODO check key
         [elem, 'EasySerialized'].flatten
       end
 

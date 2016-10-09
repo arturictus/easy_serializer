@@ -1,19 +1,16 @@
 module EasySerializer
   class Cacher
-    class Serializer
-      attr_reader :cacher
-      delegate :serializer, :metadata, to: :cacher
-      def initialize(cacher)
-        @cacher = cacher
-      end
+    class Serializer < Template
 
       def execute
-        fetch(key, options)
+        fetch
       end
 
-      def key(_value = nil)
-        _value ||= value
-        @key ||= [_value, 'EasySerialized'].flatten
+      private
+
+      def key
+        # TODO check key
+        [value, 'EasySerialized'].flatten
       end
 
       def options
@@ -32,10 +29,8 @@ module EasySerializer
         metadata.serializer(serializer.object, serializer)
       end
 
-      def fetch(_key = nil, _value = nil)
-        _key ||= key
-        _value ||= value
-        EasySerializer.cache.fetch(_key, options, &block_to_get_value)
+      def fetch
+        EasySerializer.cache.fetch(key, options, &block_to_get_value)
       end
     end
   end
