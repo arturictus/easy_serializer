@@ -19,7 +19,16 @@ module EasySerializer
     end
 
     def serializer?
-      options[:serializer]
+      !!options[:serializer]
+    end
+    alias_method :nested_serializer?, :serializer?
+
+    def cache_options
+      options[:cache_options]
+    end
+
+    def nested_serializer
+      @serializer
     end
 
     def serializer(object, serializer_instance)
@@ -27,6 +36,7 @@ module EasySerializer
       return unless serializer?
       @serializer = option_to_value(options[:serializer], object, serializer_instance)
     end
+    alias_method :nested_serializer=, :serializer
 
     # Important!!! DO NOT memoize this method
     def serialize!(object, serializer_instance)

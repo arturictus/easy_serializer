@@ -80,6 +80,9 @@ describe 'Cache' do
 
   describe 'Cache Blocks' do
     describe 'chache_key block' do
+      before do
+        skip('it makes no sense to cache somthing that is previously executed to get the key')
+      end
       class CacheKeyExample < EasySerializer::Base
         attribute :name, cache: true, cache_key: proc { |value| value }
       end

@@ -14,6 +14,10 @@ module EasySerializer
 
   autoload :Helpers
   autoload :Cacher
+  autoload :CacheRef
+  autoload :SerializerCacher
+  autoload :MethodCacher
+  autoload :CollectionCacher
   autoload :Attribute
   autoload :AttributeSerializer
   autoload :Base

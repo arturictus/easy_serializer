@@ -8,6 +8,7 @@ module EasySerializer
     def object
       serializer.object
     end
+
     def value
       value_or_default
     end
@@ -24,6 +25,7 @@ module EasySerializer
 
     def attr_serializer
       value = cache_or_attribute
+
       return value.output if value.is_a?(CacheOutput)
       return value unless serializer_class = metadata.options[:serializer]
       if metadata.is_a? Collection
@@ -34,8 +36,9 @@ module EasySerializer
     end
 
     def cache_or_attribute
-      if EasySerializer.perform_caching && metadata.options[:cache]
-        Cacher.call(serializer, metadata, nil, &metadata.get_value)
+      if EasySerializer.perform_caching && metadata.catch?
+        CacheRef.new(serializer, metadata).execute
+        # Cacher.call(serializer, metadata, nil, &metadata.get_value)
       else
         serializer.instance_exec object, &metadata.get_value
       end
@@ -43,7 +46,7 @@ module EasySerializer
 
     def serialize!(serializer_class, value)
       return unless value
-      if EasySerializer.perform_caching && metadata.options[:cache]
+      if EasySerializer.perform_caching && metadata.catch?
         Cacher.call(serializer, metadata, value)
       else
         metadata.serialize!(value, serializer)
