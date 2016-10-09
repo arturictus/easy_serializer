@@ -27,30 +27,25 @@ module EasySerializer
       value = cache_or_attribute
 
       return value.output if value.is_a?(CacheOutput)
-      return value unless serializer_class = metadata.options[:serializer]
+      return value unless metadata.nested_serializer?
       if metadata.is_a? Collection
-        Array.wrap(value).map { |o| serialize!(serializer_class, o) }
+        Array.wrap(value).map { |o| nested_serialization!(o) }
       else
-        serialize!(serializer_class, value)
+        nested_serialization!(value)
       end
     end
 
     def cache_or_attribute
       if EasySerializer.perform_caching && metadata.catch?
-        CacheRef.new(serializer, metadata).execute
-        # Cacher.call(serializer, metadata, nil, &metadata.get_value)
+        Cacher.new(serializer, metadata).execute
       else
         serializer.instance_exec object, &metadata.get_value
       end
     end
 
-    def serialize!(serializer_class, value)
+    def nested_serialization!(value)
       return unless value
-      if EasySerializer.perform_caching && metadata.catch?
-        Cacher.call(serializer, metadata, value)
-      else
-        metadata.serialize!(value, serializer)
-      end
+      metadata.serialize!(value, serializer)
     end
   end
 end
