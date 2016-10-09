@@ -13,13 +13,17 @@ module EasySerializer
     private
 
     def _execute
-      if metadata.is_a?(Collection)
-        CollectionCacher.new(self).execute
+      if metadata.is_a?(EasySerializer::Collection)
+        Collection.new(self).execute
       elsif metadata.serializer?
-        SerializerCacher.new(self).execute
+        Serializer.new(self).execute
       else
-        MethodCacher.new(self).execute
+        Method.new(self).execute
       end
     end
   end
 end
+
+require 'easy_serializer/cacher/collection'
+require 'easy_serializer/cacher/method'
+require 'easy_serializer/cacher/serializer'
