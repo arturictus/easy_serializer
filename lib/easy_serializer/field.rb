@@ -27,6 +27,10 @@ module EasySerializer
       options[:cache_options]
     end
 
+    def cache_key
+      options[:cache_key]
+    end
+
     def nested_serializer
       @serializer
     end

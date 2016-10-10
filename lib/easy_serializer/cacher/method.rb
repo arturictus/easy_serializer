@@ -1,14 +1,19 @@
 module EasySerializer
   class Cacher
     class Method < Template
+      include Helpers
 
       def execute
         fetch
       end
 
       def key
-        # TODO check key
-        [metadata.options[:name], 'EasySerialized'].flatten
+        cache_key = if metadata.cache_key
+                      option_to_value(metadata.cache_key, serializer.object, serializer)
+                    else
+                      metadata.name
+                    end
+        [serializer.object, cache_key, serializer.class.name].flatten
       end
 
       def options

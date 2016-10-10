@@ -20,7 +20,7 @@ module EasySerializer
                  else
                    Method
                  end
-      strategy.call(self)
+      strategy.call(serializer, metadata)
     end
   end
 end

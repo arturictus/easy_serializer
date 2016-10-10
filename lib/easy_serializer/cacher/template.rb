@@ -1,14 +1,15 @@
 module EasySerializer
   class Cacher
     class Template
-      attr_reader :cacher
-      delegate :serializer, :metadata, to: :cacher
-      def initialize(cacher)
-        @cacher = cacher
+      attr_reader :serializer, :metadata
+
+      def initialize(serializer, metadata)
+        @serializer = serializer
+        @metadata = metadata
       end
 
-      def self.call(cacher)
-        new(cacher).execute
+      def self.call(*args)
+        new(*args).execute
       end
     end
   end
