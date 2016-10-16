@@ -13,8 +13,11 @@ module EasySerializer
       end
 
       def key(elem)
-        # TODO check key
-        [elem, 'EasySerialized'].flatten
+        if metadata_key
+          [elem, metadata_key, nested_serializer.name]
+        else
+          [elem, nested_serializer.name]
+        end.flatten
       end
 
       def options
