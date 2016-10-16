@@ -1,7 +1,6 @@
 module EasySerializer
   class Cacher
     class Method < Template
-      include Helpers
 
       def execute
         fetch

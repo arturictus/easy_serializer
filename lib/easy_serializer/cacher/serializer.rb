@@ -6,19 +6,20 @@ module EasySerializer
         fetch
       end
 
-      private
-
       def key
-        # TODO check key
-        [value, 'EasySerialized'].flatten
+        if metadata_key
+          [value, metadata_key, nested_serializer.name]
+        else
+          [value, nested_serializer.name]
+        end.flatten
       end
 
       def options
-        metadata.cache_options
+        metadata.cache_options || {}
       end
 
       def block_to_get_value
-        proc { metadata.serialize!(serializer.object, serializer) }
+        proc { metadata.serialize!(value, serializer) }
       end
 
       def value
