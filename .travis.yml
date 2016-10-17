@@ -18,6 +18,7 @@ env:
   - JRUBY_OPTS="--debug"
 matrix:
   allow_failures:
+    - rvm: 1.9.3
     - rvm: ruby-head
     - rvm: rbx-3
     - rvm: jruby-19mode
