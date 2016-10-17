@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/arturictus/easy_serializer.svg?branch=master)](https://travis-ci.org/arturictus/easy_serializer)
 [![Gem Version](https://badge.fury.io/rb/easy_serializer.svg)](https://badge.fury.io/rb/easy_serializer)
-[![Coverage Status](https://coveralls.io/repos/github/arturictus/easy_serializer/badge.svg?branch=master)](https://coveralls.io/github/arturictus/easy_serializer?branch=master)
+[![Test Coverage](https://codeclimate.com/github/arturictus/easy_serializer/badges/coverage.svg)](https://codeclimate.com/github/arturictus/easy_serializer/coverage)
 [![Code Climate](https://codeclimate.com/github/arturictus/easy_serializer/badges/gpa.svg)](https://codeclimate.com/github/arturictus/easy_serializer)
 [![Issue Count](https://codeclimate.com/github/arturictus/easy_serializer/badges/issue_count.svg)](https://codeclimate.com/github/arturictus/easy_serializer)
 
