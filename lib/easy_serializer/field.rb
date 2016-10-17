@@ -36,9 +36,8 @@ module EasySerializer
     end
 
     def serializer(object, serializer_instance)
-      return @serializer if defined? @serializer
       return unless serializer?
-      @serializer = option_to_value(options[:serializer], object, serializer_instance)
+      option_to_value(options[:serializer], object, serializer_instance)
     end
     alias_method :nested_serializer=, :serializer
 
