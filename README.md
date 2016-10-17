@@ -1,8 +1,10 @@
 # EasySerializer
 
-[ ![Codeship Status for arturictus/easy_serializer](https://codeship.com/projects/5a101d20-6dda-0133-b7b2-666194911eaf/status?branch=master)](https://codeship.com/projects/115737)
+[![Build Status](https://travis-ci.org/arturictus/easy_serializer.svg?branch=master)](https://travis-ci.org/arturictus/easy_serializer)
+[![Gem Version](https://badge.fury.io/rb/easy_serializer.svg)](https://badge.fury.io/rb/easy_serializer)
+[![Coverage Status](https://coveralls.io/repos/github/arturictus/easy_serializer/badge.svg?branch=master)](https://coveralls.io/github/arturictus/easy_serializer?branch=master)
 [![Code Climate](https://codeclimate.com/github/arturictus/easy_serializer/badges/gpa.svg)](https://codeclimate.com/github/arturictus/easy_serializer)
-[![Test Coverage](https://codeclimate.com/github/arturictus/easy_serializer/badges/coverage.svg)](https://codeclimate.com/github/arturictus/easy_serializer/coverage)
+[![Issue Count](https://codeclimate.com/github/arturictus/easy_serializer/badges/issue_count.svg)](https://codeclimate.com/github/arturictus/easy_serializer)
 
 Semantic serializer for making easy serializing objects.
 EasySerializer is inspired in [ActiveModel Serializer > 0.10] (https://github.com/rails-api/active_model_serializers/tree/v0.10.0.rc3) it's a
