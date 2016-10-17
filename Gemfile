@@ -6,3 +6,4 @@ gem 'pry'
 gem 'simplecov', :require => false, :group => :test
 gem 'contextuable', '~> 0.4'
 gem 'coveralls', require: false
+gem "codeclimate-test-reporter", group: :test, require: false
