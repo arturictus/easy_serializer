@@ -65,8 +65,8 @@ describe 'Cache' do
     end
 
     it 'calls the cache fetch method on collection and on attribute' do
-      expect(cache).to receive(:fetch).with([user, 'EasySerialized'], instance_of(Hash))
-      expect(cache).to receive(:fetch).with([contact, 'EasySerialized'], instance_of(Hash))
+      expect(cache).to receive(:fetch).with([user, 'UserSerializer'], instance_of(Hash))
+      expect(cache).to receive(:fetch).with([contact, 'UserSerializer'], instance_of(Hash))
       subject.to_h
     end
 
