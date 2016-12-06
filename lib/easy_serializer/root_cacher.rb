@@ -25,12 +25,13 @@ module EasySerializer
     end
 
     def key
-      custom = serializer.__cache[:key]
-      if custom
-        option_to_value(custom, object, serializer)
+      custom_key = serializer.__cache[:key]
+      if custom_key
+        k = option_to_value(custom_key, object, serializer)
+        [object, k, serializer.class.name]
       else
-        [object, 'EasySerialized'].flatten
-      end
+        [object, serializer.class.name]
+      end.flatten
     end
 
     def fetch

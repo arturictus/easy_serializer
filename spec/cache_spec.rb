@@ -1,3 +1,10 @@
+module MyNameSpace
+  class UserSerializer < EasySerializer::Base
+    cache true
+    attributes :name, :email
+  end
+end
+
 describe 'Cache' do
   class UserSerializer < EasySerializer::Base
     cache true
@@ -11,6 +18,16 @@ describe 'Cache' do
   end
 
   context 'using .cache method' do
+    context "when Name spaced" do
+      subject do
+        MyNameSpace::UserSerializer.new(user)
+      end
+
+      it 'calls the cache fetch method' do
+        expect(cache).to receive(:fetch).with([user, MyNameSpace::UserSerializer.to_s], instance_of(Hash))
+        subject.to_h
+      end
+    end
     subject do
       UserSerializer.new(user)
     end
@@ -22,14 +39,14 @@ describe 'Cache' do
     end
 
     it 'calls the cache fetch method' do
-      expect(cache).to receive(:fetch).with([user, 'EasySerialized'], instance_of(Hash))
+      expect(cache).to receive(:fetch).with([user, UserSerializer.to_s], instance_of(Hash))
       subject.to_h
     end
   end
 
   context 'Cache method with key' do
     class CacheMethodWithKey < EasySerializer::Base
-      cache true, key: proc { |object| [object, upcase('key_from_block')] }
+      cache true, key: proc { |object| [upcase('key_from_block')] }
       attributes :name
 
       def upcase str
@@ -44,7 +61,7 @@ describe 'Cache' do
     end
 
     it 'call fetch with the block output' do
-      expect(cache).to receive(:fetch).with([user, 'KEY_FROM_BLOCK'], instance_of(Hash)).and_call_original
+      expect(cache).to receive(:fetch).with([user, 'KEY_FROM_BLOCK', CacheMethodWithKey.to_s], instance_of(Hash)).and_call_original
       output = CacheMethodWithKey.call(user)
       expect(output).to eq :cached
     end
@@ -81,7 +98,7 @@ describe 'Cache' do
   describe 'Cache Blocks' do
     describe 'chache_key block' do
       before do
-        skip('it makes no sense to cache somthing that is previously executed to get the key')
+        skip('it makes no sense to cache something that is previously executed to get the key')
       end
       class CacheKeyExample < EasySerializer::Base
         attribute :name, cache: true, cache_key: proc { |value| value }
