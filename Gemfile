@@ -7,5 +7,4 @@ group :test do
   gem 'dystruct', '~> 0.4'
   gem 'simplecov'
   gem 'coveralls'
-  gem "codeclimate-test-reporter"
 end

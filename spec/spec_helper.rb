@@ -1,10 +1,8 @@
 require 'simplecov'
 require 'coveralls'
-require "codeclimate-test-reporter"
 
 SimpleCov.start
 Coveralls.wear!
-CodeClimate::TestReporter.start
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'dystruct'
