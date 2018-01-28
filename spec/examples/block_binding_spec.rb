@@ -38,7 +38,7 @@ describe 'Block Binding' do
         attribute :d_name
 
         def to_const(str)
-          Class.const_get str.classify
+          BlocksBinding
         end
       end
       let(:thing) { OpenStruct.new(name: 'rigoverto', serializer: 'BlocksBinding') }

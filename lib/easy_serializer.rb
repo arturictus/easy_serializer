@@ -1,24 +1,35 @@
 require "easy_serializer/version"
-require 'active_support/all'
 
 module EasySerializer
-  include ActiveSupport::Configurable
-  extend ActiveSupport::Autoload
-
   def self.setup
     yield self
   end
 
-  config_accessor(:perform_caching) { false }
-  config_accessor(:cache)
+  def self.perform_caching=(val)
+    @perform_caching = val
+  end
 
-  autoload :Helpers
-  autoload :Cacher
-  autoload :RootCacher
-  autoload :Attribute
-  autoload :AttributeSerializer
-  autoload :Base
-  autoload :CacheOutput
-  autoload :Field
-  autoload :Collection
+  def self.perform_caching
+    return @perform_caching if defined?(@perform_caching)
+    false
+  end
+
+  def self.cache=(val)
+    @cache = val
+  end
+
+  def self.cache
+    return @cache if defined?(@cache)
+    false
+  end
+
 end
+require 'easy_serializer/helpers'
+require 'easy_serializer/field'
+require 'easy_serializer/cacher'
+require 'easy_serializer/root_cacher'
+require 'easy_serializer/attribute'
+require 'easy_serializer/attribute_serializer'
+require 'easy_serializer/cache_output'
+require 'easy_serializer/collection'
+require 'easy_serializer/base'

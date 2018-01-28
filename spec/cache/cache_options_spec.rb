@@ -6,24 +6,24 @@ describe 'Cache Options' do
   end
   describe 'On root cache' do
     class OptionForRootCache < EasySerializer::Base
-      cache true, expires_in: 10.minutes
+      cache true, expires_in: 600
       attribute :name
     end
     let(:obj) { OpenStruct.new(name: 'Jack Sparrow') }
     let(:execute) { OptionForRootCache.call(obj) }
     it 'cache receives the options' do
-      expect(CacheMock).to receive(:fetch).with(instance_of(Array), expires_in: 10.minutes)
+      expect(CacheMock).to receive(:fetch).with(instance_of(Array), expires_in: 600)
       execute
     end
   end
   describe 'On Attribute cache_options' do
     class OptionForAttributeCache < EasySerializer::Base
-      attribute :name, cache: true, cache_options: { expires_in: 10.minutes }
+      attribute :name, cache: true, cache_options: { expires_in: 600 }
     end
     let(:obj) { OpenStruct.new(name: 'Jack Sparrow') }
     let(:execute) { OptionForAttributeCache.call(obj) }
     it 'cache receives the options' do
-      expect(CacheMock).to receive(:fetch).with(instance_of(Array), expires_in: 10.minutes)
+      expect(CacheMock).to receive(:fetch).with(instance_of(Array), expires_in: 600)
       execute
     end
   end

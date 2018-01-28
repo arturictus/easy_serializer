@@ -21,7 +21,11 @@ module EasySerializer
     end
 
     def options
-      serializer.__cache.except(:block, :cache_key, :root_call, :serializer, :key)
+      h = serializer.__cache.dup
+      [:block, :cache_key, :root_call, :serializer, :key].each do |k|
+        h.delete(k)
+      end
+      h
     end
 
     def key

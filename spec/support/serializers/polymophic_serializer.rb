@@ -13,8 +13,14 @@ class PolymorphicSerializer < EasySerializer::Base
             cache: true
 
   def serializer_for_subject
-    namespace = self.class.name.gsub(self.class.name.demodulize, '')
-    object_name = object.subject_type.demodulize
-    "#{namespace}#{object_name}Serializer".constantize
+    case object.subject_type
+    when 'PolymophicSubject'
+      PolymophicSubjectSerializer
+    else
+      binding.pry
+    end
+    # namespace = self.class.name.gsub(self.class.name.demodulize, '')
+    # object_name = object.subject_type.demodulize
+    # "#{namespace}#{object_name}Serializer".constantize
   end
 end

@@ -1,8 +1,10 @@
 module EasySerializer
   class Base
     include Helpers
+    extend Forwardable
 
-    delegate :to_json, :[], to: :serialize
+    def_delegator :serialize, :to_json, :[]
+
     attr_reader :object
     def initialize(object)
       @object = object

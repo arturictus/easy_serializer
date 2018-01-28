@@ -29,7 +29,8 @@ module EasySerializer
       return value.output if value.is_a?(CacheOutput)
       return value unless metadata.nested_serializer?
       if metadata.is_a? Collection
-        Array.wrap(value).map { |o| nested_serialization!(o) }
+        ary = value.is_a?(Array) ? value : (value == nil ? [] : [value])
+        ary.map { |o| nested_serialization!(o) }
       else
         nested_serialization!(value)
       end
