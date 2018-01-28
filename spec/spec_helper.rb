@@ -4,7 +4,7 @@ require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
-require 'contextuable'
+require 'dystruct'
 require 'easy_serializer'
 
 require 'pry'

@@ -1,7 +1,7 @@
 module EasySerializer
   describe Cacher::Method do
     let(:metadata) { Attribute.new(:name, {}, nil) }
-    let(:object) { Contextuable.new(name: 'John', random: rand(100)) }
+    let(:object) { Dystruct.new(name: 'John', random: rand(100)) }
     let(:serializer) { Base.new(object) }
     subject do
       described_class.new(serializer, metadata)

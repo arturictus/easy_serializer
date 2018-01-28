@@ -5,8 +5,8 @@ module EasySerializer
       attribute :name
     end
     let(:metadata) { Attribute.new(:user, { serializer: OSerializer }, nil) }
-    let(:user) { Contextuable.new(name: 'John', random: rand(100)) }
-    let(:object) { Contextuable.new(user: user) }
+    let(:user) { Dystruct.new(name: 'John', random: rand(100)) }
+    let(:object) { Dystruct.new(user: user) }
     let(:serializer) { Base.new(object) }
     subject do
       described_class.new(serializer, metadata)
