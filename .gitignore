@@ -8,3 +8,4 @@
 /coverage/
 /tmp/
 easy_serializer*.gem
+vendor

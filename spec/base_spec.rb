@@ -14,4 +14,19 @@ describe NestedSerializer do
       expect(described_class.method(:call)).to eq described_class.method(:to_h)
     end
   end
+
+  describe "with options" do
+    class OptionsSerializer < EasySerializer::Base
+      attribute :name
+      attribute :from_opts do
+        options[:hello]
+      end
+    end
+    let(:execute) { OptionsSerializer.call(OpenStruct.new(name: 'Dave'), hello: "que pacha Neng!") }
+
+    it "can serialize for options in blocks" do
+      expect(execute.fetch(:from_opts)).to eq "que pacha Neng!"
+      expect(execute.fetch(:name)).to eq "Dave"
+    end
+  end
 end

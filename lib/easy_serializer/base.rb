@@ -5,15 +5,16 @@ module EasySerializer
 
     def_delegator :serialize, :to_json, :[]
 
-    attr_reader :object
-    def initialize(object)
+    attr_reader :object, :options
+    def initialize(object, options = {})
       @object = object
+      @options = options
     end
 
     class << self
 
-      def call(obj)
-        new(obj).serialize
+      def call(*args)
+        new(*args).serialize
       end
       alias_method :serialize, :call
       alias_method :to_hash, :call
@@ -47,7 +48,8 @@ module EasySerializer
     end
     alias_method :to_h, :serialize
     alias_method :to_hash, :serialize
-    alias_method :to_s, :to_json
+
+    def to_s; serialize.to_json end
 
     def send_to_serializer(serializer, value)
       return unless value

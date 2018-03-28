@@ -105,6 +105,19 @@ class BlockExample < EasySerializer::Base
   end
 end
 ```
+**Passing options as a second argument:**
+
+```ruby
+class OptionsSerializer < EasySerializer::Base
+  attribute :name
+  attribute :from_opts do
+    options[:hello]
+  end
+end
+
+OptionsSerializer.call(OpenStruct.new(name: 'Dave'), hello: "hello with from options")
+# => {:name=>"Dave", :from_opts=>"hello with from options"}
+```
 
 **Changing keys:**
 
