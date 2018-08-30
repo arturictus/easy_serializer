@@ -19,6 +19,12 @@ module EasySerializer
     def object
       serializer.object
     end
+    alias_method :subject, :object
+
+    def cache_key
+      return object.cache_key if object.respond_to?(:cache_key)
+      object
+    end
 
     def options
       h = serializer.__cache.dup
@@ -32,9 +38,9 @@ module EasySerializer
       custom_key = serializer.__cache[:key]
       if custom_key
         k = option_to_value(custom_key, object, serializer)
-        [object, k, serializer.class.name]
+        [cache_key, k, serializer.class.name]
       else
-        [object, serializer.class.name]
+        [cache_key, serializer.class.name]
       end.flatten
     end
 

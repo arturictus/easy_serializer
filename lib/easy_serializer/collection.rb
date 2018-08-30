@@ -11,6 +11,10 @@ module EasySerializer
       received_opts.merge(collection: true)
     end
 
+    def send_method(obj)
+      obj.send(name).to_a
+    end
+
     def received_opts
       _options || {}
     end
