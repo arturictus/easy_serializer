@@ -14,9 +14,9 @@ module EasySerializer
 
       def key(elem)
         if metadata_key
-          [elem, metadata_key, nested_serializer.name]
+          [cache_key(elem), metadata_key, nested_serializer.name]
         else
-          [elem, nested_serializer.name]
+          [cache_key(elem), nested_serializer.name]
         end.flatten
       end
 

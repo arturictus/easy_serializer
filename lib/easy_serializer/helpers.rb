@@ -13,5 +13,11 @@ module EasySerializer
         option
       end
     end
+
+    def cache_key(input_object = nil)
+      _object = input_object || subject
+      return _object.cache_key if _object.respond_to?(:cache_key)
+      _object
+    end
   end
 end

@@ -8,10 +8,14 @@ module EasySerializer
 
       def key
         if metadata_key
-          [value, metadata_key, nested_serializer.name]
+          [cache_key, metadata_key, nested_serializer.name]
         else
-          [value, nested_serializer.name]
+          [cache_key, nested_serializer.name]
         end.flatten
+      end
+
+      def subject
+        value
       end
 
       def options

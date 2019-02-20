@@ -7,12 +7,16 @@ module EasySerializer
       end
 
       def key
-        cache_key = if metadata.cache_key
-                      option_to_value(metadata.cache_key, serializer.object, serializer)
-                    else
-                      metadata.name
-                    end
-        [serializer.object, cache_key, serializer.class.name].flatten
+        extra_cache_key = if metadata.cache_key
+                            option_to_value(metadata.cache_key, serializer.object, serializer)
+                          else
+                            metadata.name
+                          end
+        [cache_key, extra_cache_key, serializer.class.name].flatten
+      end
+
+      def subject
+        serializer.object
       end
 
       def options
